@@ -2,102 +2,162 @@
 // canonical platform (programs/vglp/cva/live_<c>), four persons, alice, bob,
 // carol and dave, in one GLP heap.  The server is every person: it keeps what
 // each person's dispatcher draws and injects the person's grants,
-// input(Id, Path, R), from the web page.  A contract's world starts on its
-// first request and is dropped after an hour without one.
+// input(Id, Path, R), from the web page.
+//
+// Each contract's world runs in an isolate of its own, so that loading a
+// platform (seconds of CPU, minutes on a small host) never blocks the web
+// server.  A world starts on its contract's first request; at most MAX_WORLDS
+// run at once (default 3), the least recently used dropped first, and a world
+// unused for an hour is dropped.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:glp_runtime/multiagent/agent_runtime.dart';
 import 'package:glp_runtime/runtime/terms.dart' as rt;
 
 final persons = ['alice', 'bob', 'carol', 'dave'];
 
+// ---------------------------------------------------------------------------
+// The worker: one world, in its own isolate.
+// ---------------------------------------------------------------------------
+
+void worker(List<Object?> args) async {
+  final root = args[0] as String, contract = args[1] as String, out = args[2] as SendPort;
+  final inbox = ReceivePort();
+  out.send({'k': 'port', 'port': inbox.sendPort});
+  final agent = AgentRuntime(
+    agentId: 'host',
+    program: '$root/programs/vglp/cva/live_$contract',
+    rootSelfGlpPath: '$root/programs/self.glp',
+    goalLabel: 'live_ui/3',
+  );
+  agent.maxQuiescenceCycles = 20000000;
+  agent.onUserOutput = (t) => out.send({'k': 'out', 'j': toJson(agent.derefTerm(t))});
+  final calendar = File('$root/programs/vglp/cva/live_$contract/self.glp')
+      .readAsStringSync()
+      .contains('cal(alice, N)');
+  var queue = Future<void>.value();
+  Future<void> run(Future<void> Function() f) {
+    final done = queue.then((_) => f());
+    queue = done.catchError((e) => out.send({'k': 'error', 'e': '$e'}));
+    return queue;
+  }
+
+  var day = 0;
+  Future<void> setDay(int d) async {
+    day = d;
+    out.send({'k': 'day', 'day': d});
+    for (final p in persons) {
+      await agent.injectUserInput(rt.StructTerm('cal', [rt.ConstTerm(p), rt.ConstTerm(d)]));
+    }
+  }
+
+  inbox.listen((msg) {
+    final m = msg as Map;
+    if (m['k'] == 'act') {
+      out.send({'k': 'status', 's': 'working'});
+      run(() async {
+        await agent.injectUserInput(rt.StructTerm('in', [
+          rt.ConstTerm(m['person'] as String),
+          rt.StructTerm('input', [
+            rt.ConstTerm(m['id'] as int),
+            listOf([for (final x in m['path'] as List) rt.ConstTerm(x as int)]),
+            fromJson(m['value']),
+          ]),
+        ]));
+      }).whenComplete(() => out.send({'k': 'status', 's': 'ready'}));
+    } else if (m['k'] == 'day' && calendar) {
+      out.send({'k': 'status', 's': 'working'});
+      run(() => setDay(day + 1)).whenComplete(() => out.send({'k': 'status', 's': 'ready'}));
+    }
+  });
+
+  try {
+    await agent.initialize();
+    if (calendar) await setDay(1);
+    out.send({'k': 'status', 's': 'ready', 'calendar': calendar});
+  } catch (e) {
+    out.send({'k': 'status', 's': 'failed: $e'});
+  }
+}
+
+// ---------------------------------------------------------------------------
+// The server's view of a world: what the worker reported.
+// ---------------------------------------------------------------------------
+
 class World {
   final String contract;
   World(this.contract);
-  late AgentRuntime agent;
+  Isolate? isolate;
+  SendPort? port;
+  final pending = <Map<String, Object?>>[];
   final Map<String, Map<int, Object?>> draws = {for (final p in persons) p: {}};
   final List<Object?> net = [];
   int version = 0;
-  int day = 0;
-  bool calendar = false;
+  int? day;
   String status = 'starting';
+  final started = DateTime.now();
   DateTime used = DateTime.now();
-  Future<void> queue = Future.value();
-  late Future<void> ready;
 
   Future<void> start(String root) async {
-    agent = AgentRuntime(
-      agentId: 'host',
-      program: '$root/programs/vglp/cva/live_$contract',
-      rootSelfGlpPath: '$root/programs/self.glp',
-      goalLabel: 'live_ui/3',
-    );
-    agent.maxQuiescenceCycles = 20000000;
-    agent.onUserOutput = (t) => _onOut(toJson(agent.derefTerm(t)));
-    calendar = File('$root/programs/vglp/cva/live_$contract/self.glp').readAsStringSync().contains('cal(alice, N)');
-    try {
-      await agent.initialize();
-      if (calendar) await setDay(1);
-      status = 'ready';
-    } catch (e) {
-      status = 'failed: $e';
-      stderr.writeln('[$contract] $e');
-    }
-    version++;
+    final rp = ReceivePort();
+    rp.listen(_onMsg);
+    isolate = await Isolate.spawn(worker, [root, contract, rp.sendPort]);
   }
 
-  void _onOut(Object? j) {
-    if (j is Map && j['f'] == 'd') {
-      final args = j['a'] as List;
-      final who = args[0] as String;
-      final draw = args[1];
-      if (draw is Map && draw['f'] == 'draw') {
-        final a = draw['a'] as List;
-        draws[who]![a[0] as int] = a[2];
-      } else if (draw is Map && draw['f'] == 'withdraw') {
-        draws[who]!.remove((draw['a'] as List)[0] as int);
-      }
-    } else if (j is Map && j['f'] == 'net') {
-      net.add((j['a'] as List)[0]);
-      if (net.length > 300) net.removeAt(0);
-    }
-    version++;
-  }
+  void stop() => isolate?.kill(priority: Isolate.immediate);
 
-  Future<void> act(String who, int id, List<int> path, Object? value) {
+  void send(Map<String, Object?> m) {
     used = DateTime.now();
-    status = 'working';
-    version++;
-    final term = rt.StructTerm('in', [
-      rt.ConstTerm(who),
-      rt.StructTerm('input', [rt.ConstTerm(id), listOf(path.map((i) => rt.ConstTerm(i)).toList()), fromJson(value)]),
-    ]);
-    final done = queue.then((_) => agent.injectUserInput(term)).whenComplete(() {
-      status = 'ready';
-      version++;
-    });
-    queue = done.catchError((e) => stderr.writeln('[$contract] $e'));
-    return done;
+    final p = port;
+    if (p == null) {
+      pending.add(m);
+    } else {
+      p.send(m);
+    }
   }
 
-  Future<void> setDay(int d) {
-    day = d;
+  void _onMsg(dynamic msg) {
+    final m = msg as Map;
+    switch (m['k']) {
+      case 'port':
+        port = m['port'] as SendPort;
+        for (final x in pending) port!.send(x);
+        pending.clear();
+        return;
+      case 'status':
+        status = m['s'] as String;
+      case 'day':
+        day = m['day'] as int;
+      case 'error':
+        stderr.writeln('[$contract] ${m['e']}');
+        return;
+      case 'out':
+        final j = m['j'];
+        if (j is Map && j['f'] == 'd') {
+          final a = j['a'] as List;
+          final who = a[0] as String, draw = a[1];
+          if (draw is Map && draw['f'] == 'draw') {
+            final d = draw['a'] as List;
+            draws[who]![d[0] as int] = d[2];
+          } else if (draw is Map && draw['f'] == 'withdraw') {
+            draws[who]!.remove((draw['a'] as List)[0] as int);
+          }
+        } else if (j is Map && j['f'] == 'net') {
+          net.add((j['a'] as List)[0]);
+          if (net.length > 300) net.removeAt(0);
+        }
+    }
     version++;
-    final done = queue.then((_) async {
-      for (final p in persons) {
-        await agent.injectUserInput(rt.StructTerm('cal', [rt.ConstTerm(p), rt.ConstTerm(d)]));
-      }
-    });
-    queue = done.catchError((e) => stderr.writeln('[$contract] $e'));
-    return done;
   }
 
   Map<String, Object?> state() => {
         'version': version,
         'status': status,
-        if (calendar) 'day': day,
+        'since': DateTime.now().difference(started).inSeconds,
+        if (day != null) 'day': day,
         'persons': {for (final p in persons) p: draws[p]!.map((k, v) => MapEntry('$k', v))},
         'net': net.length > 60 ? net.sublist(net.length - 60) : net,
       };
@@ -135,22 +195,26 @@ rt.Term fromJson(Object? j) {
   return rt.ConstTerm(j);
 }
 
+// ---------------------------------------------------------------------------
+// The web server.
+// ---------------------------------------------------------------------------
+
 final worlds = <String, World>{};
 late String root;
 late Set<String> contracts;
+final maxWorlds = int.tryParse(Platform.environment['MAX_WORLDS'] ?? '') ?? 3;
 
 World world(String c) {
   var w = worlds[c];
   if (w == null) {
-    // keep at most MAX_WORLDS contracts running (small hosts): drop the least recently used
-    final cap = int.tryParse(Platform.environment['MAX_WORLDS'] ?? '') ?? 3;
-    while (worlds.length >= cap) {
-      final old = worlds.entries.reduce((a, b) => a.value.used.isBefore(b.value.used) ? a : b).key;
-      worlds.remove(old);
+    while (worlds.length >= maxWorlds) {
+      final old = worlds.entries.reduce((a, b) => a.value.used.isBefore(b.value.used) ? a : b);
+      old.value.stop();
+      worlds.remove(old.key);
     }
     w = World(c);
     worlds[c] = w;
-    w.ready = w.start(root);
+    unawaited(w.start(root));
   }
   w.used = DateTime.now();
   return w;
@@ -169,7 +233,11 @@ Future<void> main(List<String> args) async {
       .toSet();
   Timer.periodic(const Duration(minutes: 5), (_) {
     final cut = DateTime.now().subtract(const Duration(hours: 1));
-    worlds.removeWhere((c, w) => w.used.isBefore(cut));
+    worlds.removeWhere((c, w) {
+      final drop = w.used.isBefore(cut);
+      if (drop) w.stop();
+      return drop;
+    });
   });
   final server = await HttpServer.bind(InternetAddress.anyIPv4, port);
   stdout.writeln('live server on $port: ${contracts.join(', ')}');
@@ -190,7 +258,7 @@ Future<void> handle(HttpRequest req, String webDir) async {
         return;
       }
       final op = seg[2];
-      var w = world(c);
+      final w = world(c);
       if (op == 'state') {
         final since = int.tryParse(req.uri.queryParameters['since'] ?? '') ?? -1;
         final until = DateTime.now().add(const Duration(seconds: 20));
@@ -200,15 +268,13 @@ Future<void> handle(HttpRequest req, String webDir) async {
         _json(req, w.state());
       } else if (op == 'act' && req.method == 'POST') {
         final body = jsonDecode(await utf8.decodeStream(req)) as Map;
-        await w.ready;
-        unawaited(w.act(body['person'] as String, body['id'] as int,
-            [for (final x in body['path'] as List) x as int], body['value']));
+        w.send({'k': 'act', 'person': body['person'], 'id': body['id'], 'path': body['path'], 'value': body['value']});
         _json(req, {'ok': true});
       } else if (op == 'day' && req.method == 'POST') {
-        await w.ready;
-        if (w.calendar) unawaited(w.setDay(w.day + 1));
+        w.send({'k': 'day'});
         _json(req, {'ok': true});
       } else if (op == 'reset' && req.method == 'POST') {
+        w.stop();
         worlds.remove(c);
         world(c);
         _json(req, {'ok': true});
