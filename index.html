@@ -268,8 +268,9 @@ function hoodHtml(c){
   const mt = $('#mt'); if (mt) mt.onclick = () => { const d = $('#inh'), o = d.style.display === 'none'; d.style.display = o ? '' : 'none'; mt.textContent = (o ? '▾ hide' : '▸ show') + ` the ${inh.length} inherited acts`; };
   document.querySelectorAll('details[data-file]').forEach(d => d.addEventListener('toggle', async () => {
     if (!d.open || d.dataset.done) return; d.dataset.done = 1;
-    try { const r = await fetch(d.dataset.file); d.querySelector('.code').textContent = await r.text(); }
-    catch (e){ d.querySelector('.code').textContent = 'Could not load the file.'; }
+    const gh = `https://github.com/nimrodtalmon/grassroots-contracts/blob/main/${d.dataset.file}`;
+    try { const r = await fetch(d.dataset.file); if (!r.ok) throw 0; d.querySelector('.code').textContent = await r.text(); }
+    catch (e){ d.querySelector('.code').innerHTML = `Not available here: <a href="${gh}" target="_blank" rel="noopener">open it on GitHub ↗</a>`; }
   }));
 }
 function schemaHtml(s, open){
