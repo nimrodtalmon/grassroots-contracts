@@ -90,6 +90,7 @@ details.raw pre{font:11px var(--mono);white-space:pre-wrap;color:var(--mute);mar
 <header><div class="hin">
   <a class="back" id="back" href="./">‹ Contracts</a>
   <div class="ttl"><div class="ticon" id="ticon"></div><div><b id="title">…</b><small>Live · four people, each with their own agent</small></div></div>
+  <a class="back" id="about" href="./">About this contract</a>
   <span class="sp"></span>
   <span class="day" id="day"></span>
   <span class="status busy" id="status"><span class="dot"></span><span id="stxt">connecting…</span></span>
@@ -411,7 +412,7 @@ if (META){
   $('#title').textContent = META.title;
   $('#ticon').textContent = META.icon;
   $('#ticon').style.background = `linear-gradient(160deg, ${FAM[META.family][0]}, ${FAM[META.family][1]})`;
-  $('#back').href = './#' + META.id;
+  $('#about').href = './#' + META.id;
 }
 fetch(`specs/${C}.json`).then(r => { if (!r.ok) throw 0; return r.json(); }).then(s => {
   SPEC = s; if (!META) $('#title').textContent = `${s.id}: ${s.title}`; poll();
