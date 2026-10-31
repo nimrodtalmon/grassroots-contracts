@@ -88,7 +88,7 @@ details.raw pre{font:11px var(--mono);white-space:pre-wrap;color:var(--mute);mar
 </head>
 <body>
 <header><div class="hin">
-  <a class="back" id="back" href="/">‹ Contracts</a>
+  <a class="back" id="back" href="./">‹ Contracts</a>
   <div class="ttl"><div class="ticon" id="ticon"></div><div><b id="title">…</b><small>Live · four people, each with their own agent</small></div></div>
   <span class="sp"></span>
   <span class="day" id="day"></span>
@@ -126,7 +126,8 @@ function show(t){
   }
   return PERSONS.includes(t) ? cap(t) : String(t);
 }
-const api = p => `/api/${C}/${p}`;
+const BASE = location.pathname.replace(/\/[^/]*$/, '');  // '' at the site root, '/glp' under a sub-path
+const api = p => `${BASE}/api/${C}/${p}`;
 
 function screen(p){
   const cs = (ST && ST.persons[p]) || {};
@@ -410,7 +411,7 @@ if (META){
   $('#title').textContent = META.title;
   $('#ticon').textContent = META.icon;
   $('#ticon').style.background = `linear-gradient(160deg, ${FAM[META.family][0]}, ${FAM[META.family][1]})`;
-  $('#back').href = '/#' + META.id;
+  $('#back').href = './#' + META.id;
 }
 fetch(`specs/${C}.json`).then(r => { if (!r.ok) throw 0; return r.json(); }).then(s => {
   SPEC = s; if (!META) $('#title').textContent = `${s.id}: ${s.title}`; poll();
@@ -419,7 +420,7 @@ fetch(`specs/${C}.json`).then(r => { if (!r.ok) throw 0; return r.json(); }).the
   $('#status').remove(); $('#reset').remove(); $('#net').remove(); document.querySelector('.ttl small').remove();
   $('#phones').outerHTML = `<div class="nope"><h1>${META ? esc(META.title) + ' has no app yet' : 'No such app'}</h1>
     <p>${META ? 'This contract has not been compiled yet, so there is nothing to run. Its text is on the contract page.' : 'There is no live app by that name.'}</p>
-    <p><a style="color:var(--blue)" href="/${META ? '#' + META.id : ''}">‹ Back to the contracts</a></p></div>`;
+    <p><a style="color:var(--blue)" href="./${META ? '#' + META.id : ''}">‹ Back to the contracts</a></p></div>`;
 });
 </script>
 </body>

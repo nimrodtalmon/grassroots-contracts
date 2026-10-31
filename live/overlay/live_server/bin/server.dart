@@ -227,7 +227,7 @@ Future<void> main(List<String> args) async {
   contracts = Directory('$root/programs/vglp/cva')
       .listSync()
       .whereType<Directory>()
-      .map((d) => d.path.split('/').last)
+      .map((d) => d.path.split(RegExp(r'[\\/]')).last)  // '/' or '\\' (Windows)
       .where((n) => n.startsWith('live_'))
       .map((n) => n.substring(5))
       .toSet();
