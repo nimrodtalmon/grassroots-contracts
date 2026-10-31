@@ -145,7 +145,7 @@ function words(ws){
     : isS(w,'named') ? ' · '+esc(w.a[0])+': <b>'+esc(show(w.a[1]))+'</b>' : isS(w,'valued') ? ' · '+esc(w.a[0])+': '+esc(w.a[1]) : esc(show(w))).join('');
 }
 async function act(p, id, path, value){
-  used[p+':'+id] = true; render();
+  used[p+':'+id] = true; if (ST) ST.status = 'working'; render();
   await fetch(api('act'), {method:'POST', body: JSON.stringify({person: p, id, path, value})});
 }
 
