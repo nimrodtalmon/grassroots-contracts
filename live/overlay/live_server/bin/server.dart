@@ -142,6 +142,12 @@ late Set<String> contracts;
 World world(String c) {
   var w = worlds[c];
   if (w == null) {
+    // keep at most MAX_WORLDS contracts running (small hosts): drop the least recently used
+    final cap = int.tryParse(Platform.environment['MAX_WORLDS'] ?? '') ?? 3;
+    while (worlds.length >= cap) {
+      final old = worlds.entries.reduce((a, b) => a.value.used.isBefore(b.value.used) ? a : b).key;
+      worlds.remove(old);
+    }
     w = World(c);
     worlds[c] = w;
     w.ready = w.start(root);

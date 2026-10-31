@@ -14,7 +14,7 @@ live app for every compiled contract: four people, each with an agent running th
 
 ## Deploy on Render
 
-New → Blueprint → this repository. The Starter plan is enough; each act takes a moment of CPU.
+New → Blueprint → this repository. The free plan works (it sleeps when idle and acts are slow on its small CPU); Starter is faster. At most MAX_WORLDS (default 3) contracts run at once.
 A contract's world starts on its first visit (about a minute) and is dropped after an hour idle.
 
 ## Rebuild
