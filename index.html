@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grassroots Contracts</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fff; --ink:#22211e; --mute:#77736a; --line:#e6e1d6;
+  --identity:#5b7db1; --social:#2f9e8f; --care:#8a6bc4; --money:#d49a2a; --mobility:#e0775a;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit}
+header{display:flex;align-items:center;gap:14px;padding:12px 24px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-weight:750;font-size:18px;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.logo span{display:inline-flex;gap:2px}
+.logo i{width:9px;height:9px;border-radius:3px;display:inline-block}
+#q{margin-left:auto;width:min(320px,45vw);padding:8px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;background:#fff}
+main{max-width:1160px;margin:0 auto;padding:22px 24px 70px}
+.hero h2{font-size:clamp(22px,3vw,30px);margin:6px 0 6px;letter-spacing:-.01em}
+.hero p{color:var(--mute);margin:0 0 18px;max-width:720px}
+#graphwrap{background:var(--card);border:1px solid var(--line);border-radius:18px;position:relative;overflow:hidden}
+#graph{display:block;width:100%;height:auto}
+.node{cursor:pointer}
+.node rect{stroke-width:0;transition:transform .15s}
+.node text.id{font:700 15px system-ui,sans-serif;fill:#fff}
+.node text.ic{font-size:16px}
+.node:hover rect{filter:brightness(1.08)}
+.node.dim{opacity:.18}
+.node.hit rect{stroke:#22211e;stroke-width:3}
+.edge{stroke:#b9b3a5;stroke-width:1.4;fill:none}
+.edge.dim{opacity:.12}
+#tip{position:absolute;pointer-events:none;background:#22211e;color:#fff;border-radius:10px;padding:8px 11px;font-size:13px;max-width:260px;opacity:0;transition:opacity .12s;z-index:3}
+#tip b{display:block;font-size:14px}
+.sec-title{display:flex;align-items:baseline;gap:10px;margin:30px 0 12px}
+.sec-title h3{margin:0;font-size:19px}
+.sec-title span{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:12px;cursor:pointer;transition:transform .12s, box-shadow .12s}
+.app:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.07)}
+.app.dim{opacity:.25}
+.tile{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.app .nm{font-weight:650;line-height:1.25}
+.app .nm small{display:block;color:var(--mute);font-weight:500;font-size:12px}
+.app .ab{font-size:13.5px;color:#4d4a43;margin-top:3px;line-height:1.4}
+.app .row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:11.5px;border-radius:20px;padding:2px 9px;background:#f1eee6;color:#5d5a52}
+.chip.live{background:#e4f3ea;color:#2a7a4b}
+/* contract page */
+#view{display:none}
+.zoomin{animation:zoomin .35s ease}
+@keyframes zoomin{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.chead{display:flex;gap:18px;align-items:center;margin:6px 0 18px;flex-wrap:wrap}
+.chead .tile{width:76px;height:76px;border-radius:20px;font-size:38px}
+.chead h2{margin:0;font-size:clamp(22px,3vw,30px);line-height:1.15}
+.chead .ab{color:#4d4a43;margin:4px 0 0;max-width:640px}
+.chead .meta{color:var(--mute);font-size:13.5px;margin-top:4px}
+.chead .meta a{cursor:pointer;text-decoration:underline;text-decoration-color:#ccc}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+.btn{border:none;border-radius:12px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{color:#fff}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin-bottom:16px}
+.bh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bh h3{margin:0;font-size:16px}
+.q{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--mute);font:600 13px system-ui;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.q:hover{background:var(--ink);color:#fff}
+.pre{font-style:italic;color:#4d4a43;margin-bottom:6px}
+ol.cl{padding:0;margin:0;list-style:none}
+ol.cl li{margin:10px 0;display:grid;grid-template-columns:22px 22px 1fr;gap:2px}
+ol.cl .n{color:var(--mute)}
+.mod{display:inline-block;width:1.2em;text-align:center}
+.note{color:var(--mute);font-size:14.5px;margin:0 0 12px}
+.small{font-size:13.5px;color:var(--mute)}
+/* the hood */
+#hood{display:none}
+.layer{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin:0 0 26px}
+.layer:not(.last)::after{content:"↓";position:absolute;left:50%;bottom:-25px;transform:translateX(-50%);color:#b9b3a5;font-size:18px}
+.layer .num{width:26px;height:26px;border-radius:50%;color:#fff;font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.layer .sum{color:#4d4a43;font-size:14.5px;margin:2px 0 0}
+.layer details{margin-top:8px}
+.layer summary{cursor:pointer;font-size:14px;color:var(--mute)}
+.code{font:12px/1.5 var(--mono);background:#faf8f3;border:1px solid var(--line);border-radius:10px;padding:10px 12px;max-height:460px;overflow:auto;white-space:pre;margin-top:8px}
+.verdict{font:13px var(--mono);background:#e4f3ea;color:#2a6b45;border-radius:8px;padding:6px 10px;display:inline-block;word-break:break-word;margin-top:6px}
+.schema{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#fff}
+.schema summary{padding:8px 12px;font:13px var(--mono);list-style:none;display:flex;gap:8px;color:var(--ink)}
+.schema summary::-webkit-details-marker{display:none}
+.schema summary .fr{margin-left:auto;font:12px system-ui;color:var(--mute)}
+.schema .say{padding:0 12px 6px;font-size:14px;color:#4d4a43}
+table.roles{border-collapse:collapse;width:100%;font-size:13px}
+table.roles th,table.roles td{border-top:1px solid var(--line);padding:6px 12px;text-align:left;vertical-align:top}
+table.roles th{font-weight:500;color:var(--mute);font-size:12px}
+table.roles td.r{font-family:var(--mono);white-space:nowrap}
+.atom{font:12px var(--mono);display:inline-block;padding:1px 6px;border-radius:5px;margin:1px 2px}
+.a-need{background:#eef0f6}.a-not{background:#f6ecec;text-decoration:line-through;text-decoration-color:#b44}
+.a-add{background:#e4f3ea}.a-del{background:#f8eadf}
+.more{font-size:14px;color:var(--mute);cursor:pointer;margin:6px 0 0}
+/* popup */
+#pop{position:fixed;inset:0;background:rgba(30,28,24,.35);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+#pop .card{background:#fff;border-radius:16px;max-width:520px;padding:20px 22px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+#pop h4{margin:0 0 8px;font-size:17px}
+#pop p{margin:6px 0;font-size:15px;color:#3d3b36}
+#pop .x{float:right;border:none;background:none;font-size:20px;cursor:pointer;color:var(--mute)}
+@media (max-width:640px){header{flex-wrap:wrap}#q{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" id="home"><span><i style="background:var(--identity)"></i><i style="background:var(--social)"></i><i style="background:var(--care)"></i><i style="background:var(--money)"></i></span>Grassroots Contracts</div>
+  <input id="q" placeholder="Find a contract…" autocomplete="off">
+</header>
+<main>
+  <section id="top">
+    <div class="hero">
+      <h2>Social contracts, written in plain English, running as apps.</h2>
+      <p>Each contract is a few rules about what people may do with each other. A program translates it, step by step, into an app that runs on people's own phones, with no central server. Arrows show what a contract builds on.</p>
+    </div>
+    <div id="graphwrap"><svg id="graph"></svg><div id="tip"></div></div>
+    <div class="sec-title"><h3>All contracts</h3><span>tap one to read it and open its app</span></div>
+    <div class="grid" id="apps"></div>
+  </section>
+  <section id="view"></section>
+</main>
+<div id="pop"><div class="card"><button class="x" id="popx">×</button><div id="popc"></div></div></div>
+<script src="data.js"></script>
+<script>
+const D = window.DATA, C = {};
+D.contracts.forEach(c => C[c.id] = c);
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const col = c => `var(--${c.family})`;
+const LIVE = (location.hostname.endsWith('.onrender.com') || location.hostname === 'localhost') ? '' : 'https://grassroots-contracts.onrender.com';
+const appUrl = c => `${LIVE}/app.html?c=${c.id.toLowerCase()}`;
+
+/* ---------- help ---------- */
+const HELP = {
+  contract: ['What is a contract?', `<p>A few plain rules about what people may do with each other. Alice, Bob and Carol stand for any people.</p>
+    <p><b>■ enforced</b>: the app makes it so; nobody can break it.<br><b>◆ attested</b>: you state it is true, and sign it.<br><b>○ undertaken</b>: a promise you make; the app cannot check it.</p>
+    <p>A contract builds on the ones it extends: everything they allow is allowed here too.</p>`],
+  hood: ['Under the hood', `<p>Nobody writes the app by hand. A chain of programs, the <i>cascade</i>, translates the English contract step by step into the code each person's phone runs. Each layer below is generated from the one above it.</p>`],
+  acts: ['Speech acts', `<p>Each rule becomes one or more <b>speech acts</b>: who takes part, what each of them must already have, and what each gains or loses.</p>
+    <p><b>?</b> after a role: the act happens only if that person wants it. A role without it is affected without being asked.</p>
+    <p>Small letters (x, n, k, …) are values chosen when acting. <code>&lt;Alice&gt;.n</code> is a name n in Alice's own namespace, such as her group; <code>Alice[listed(*, n)]</code> is everyone Alice lists for n; <code>k.coin(u)</code> is k coins of u.</p>`],
+  check: ['The grassroots check', `<p>A program checks that the contract can grow from the bottom up: some act can start everything from nothing; every fact a person holds traces back to an act that created it; and every act is joined to a person who wants it.</p>`],
+  vmat: ['Transactions', `<p>Each speech act becomes an atomic transaction among its parties: it happens at all of them or at none, and only with the will of those who must agree.</p>`],
+  platform: ['The platform', `<p>What each person's agent runs: the transactions, carried out by a two-phase commit that the proposing person's agent coordinates, written in vGLP.</p>`],
+  glp: ['GLP', `<p>The same platform compiled to GLP, the logic programming language the agents run.</p>`],
+  app: ['The app', `<p>Four people, Alice, Bob, Carol and Dave, each with an agent running the compiled platform, live on a server. Each tap is a real act of the platform, so it takes a moment.</p>`],
+};
+function help(k){ $('#popc').innerHTML = `<h4>${HELP[k][0]}</h4>${HELP[k][1]}`; $('#pop').style.display = 'flex'; }
+$('#popx').onclick = () => $('#pop').style.display = 'none';
+$('#pop').onclick = e => { if (e.target.id === 'pop') $('#pop').style.display = 'none'; };
+const Q = k => `<button class="q" data-help="${k}" title="What is this?">?</button>`;
+document.addEventListener('click', e => { const b = e.target.closest('[data-help]'); if (b) help(b.dataset.help); });
+
+/* ---------- graph ---------- */
+const POS = {GKK:[450,0], GSG:[300,1], GC:[680,1], GSN:[130,2], GnW:[300,2], GFF:[460,2], LBM:[600,2], GB:[770,2], CSSN:[200,3], GAI:[380,3], AGORA:[770,3], GSNP:[290,4]};
+function drawGraph(){
+  const W = 900, rowH = 92, nw = 108, nh = 46, top = 34;
+  const xy = id => ({x: POS[id][0], y: top + POS[id][1]*rowH});
+  const H = top + 4*rowH + 40;
+  let s = `<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b9b3a5"/></marker></defs>`;
+  D.contracts.forEach(c => c.extends.forEach(p => { const a = xy(c.id), b = xy(p);
+    s += `<line class="edge" x1="${a.x}" y1="${a.y - nh/2}" x2="${b.x}" y2="${b.y + nh/2 + 3}" marker-end="url(#ar)"/>`; }));
+  D.contracts.forEach(c => { const p = xy(c.id);
+    s += `<g class="node" data-id="${c.id}" transform="translate(${p.x - nw/2},${p.y - nh/2})">
+      <rect width="${nw}" height="${nh}" rx="13" style="fill:${col(c)}"/>
+      <text class="ic" x="13" y="29">${c.icon}</text>
+      <text class="id" x="${nw/2 + 12}" y="29" text-anchor="middle">${c.id}</text></g>`; });
+  const g = $('#graph'); g.setAttribute('viewBox', `0 0 ${W} ${H}`); g.innerHTML = s;
+  const tip = $('#tip'), wrap = $('#graphwrap');
+  g.querySelectorAll('.node').forEach(n => {
+    const c = C[n.dataset.id];
+    n.onclick = () => go(c.id);
+    n.onmousemove = e => { const r = wrap.getBoundingClientRect();
+      tip.innerHTML = `<b>${esc(c.title)}</b>${esc(c.about)}`; tip.style.opacity = 1;
+      tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 270) + 'px'; tip.style.top = (e.clientY - r.top + 14) + 'px'; };
+    n.onmouseleave = () => tip.style.opacity = 0;
+  });
+}
+function drawApps(){
+  $('#apps').innerHTML = D.contracts.map(c => `<div class="app" data-id="${c.id}">
+    <div class="tile" style="background:${col(c)}">${c.icon}</div>
+    <div><div class="nm">${esc(c.title)}<small>${c.id}${c.extends.length ? ' · builds on ' + c.extends.join(', ') : ' · the base'}</small></div>
+    <div class="ab">${esc(c.about)}</div>
+    <div class="row">${c.live ? '<span class="chip live">▶ runs live</span>' : '<span class="chip">text only, for now</span>'}</div></div></div>`).join('');
+  document.querySelectorAll('.app').forEach(a => a.onclick = () => go(a.dataset.id));
+}
+
+/* ---------- search ---------- */
+function doSearch(){
+  const q = $('#q').value.trim().toLowerCase();
+  const hit = c => !q || [c.id, c.title, c.about, ...c.clauses.map(x => x.name + ' ' + x.text)].join(' ').toLowerCase().includes(q);
+  document.querySelectorAll('.node').forEach(n => { const h = hit(C[n.dataset.id]); n.classList.toggle('dim', !h); n.classList.toggle('hit', !!q && h); });
+  document.querySelectorAll('.edge').forEach(e => e.classList.toggle('dim', !!q));
+  document.querySelectorAll('.app').forEach(a => a.classList.toggle('dim', !hit(C[a.dataset.id])));
+}
+$('#q').addEventListener('input', () => { if (C[location.hash.slice(1).split('-')[0]]) go(null); doSearch(); });
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ const c = D.contracts.find(c => !document.querySelector(`.app[data-id="${c.id}"]`).classList.contains('dim')); if (c) go(c.id); } });
+
+/* ---------- routing ---------- */
+function go(id, hood){ location.hash = id ? `#${id}${hood ? '-hood' : ''}` : '#contracts'; }
+$('#home').onclick = () => { $('#q').value = ''; doSearch(); go(null); };
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if ($('#pop').style.display === 'flex'){ $('#pop').style.display = 'none'; return; }
+  if (document.activeElement.tagName !== 'INPUT') go(null);
+});
+window.addEventListener('hashchange', route);
+function route(){
+  const [id, part] = location.hash.slice(1).split('-');
+  if (!C[id]){ $('#view').style.display = 'none'; $('#top').style.display = ''; return; }
+  $('#top').style.display = 'none';
+  const v = $('#view'); v.style.display = 'block'; v.classList.remove('zoomin'); void v.offsetWidth; v.classList.add('zoomin');
+  page(C[id], part === 'hood');
+  if (part !== 'hood') window.scrollTo(0, 0);
+}
+
+/* ---------- a contract ---------- */
+function page(c, hood){
+  const kids = D.contracts.filter(k => k.extends.includes(c.id));
+  $('#view').innerHTML = `
+    <div class="chead"><div class="tile" style="background:${col(c)}">${c.icon}</div>
+      <div><h2>${esc(c.title)}</h2><div class="ab">${esc(c.about)}</div>
+      <div class="meta">${c.id} · by ${esc(c.owner)}${c.extends.length ? ' · builds on ' + c.extends.map(e => `<a data-go="${e}">${e}</a>`).join(', ') : ''}${kids.length ? ' · used by ' + kids.map(k => `<a data-go="${k.id}">${k.id}</a>`).join(', ') : ''} · <a data-go="">all contracts</a></div></div></div>
+    <div class="btns">
+      ${c.live ? `<a class="btn primary" style="background:${col(c)}" href="${appUrl(c)}" target="_blank" rel="noopener">▶ Open the app</a>` : `<button class="btn primary" style="background:${col(c)}" disabled>No app yet</button>`}
+      <button class="btn ghost" id="hoodbtn" ${c.cascade ? '' : 'disabled'}>🔧 ${hood ? 'Close the hood' : 'Open the hood'}</button>
+    </div>
+    <div class="box"><div class="bh"><h3>The contract</h3>${Q('contract')}</div>
+      ${c.noteBefore ? `<p class="note">${esc(c.noteBefore)}</p>` : ''}
+      <div class="pre">${esc(c.preamble)}</div>
+      <ol class="cl">${c.clauses.map(cl => `<li><span class="n">${cl.n}.</span><span class="mod" title="${({'■':'enforced','◆':'attested','○':'undertaken'})[cl.mod]}">${cl.mod}</span><span><i>${esc(cl.name)}.</i> ${esc(cl.text)}</span></li>`).join('')}</ol>
+      ${c.source === 'pdf' ? `<p class="small" style="margin:12px 0 0">Text: ${esc(D.pdf)}.</p>` : `<p class="small" style="margin:12px 0 0">An experimental contract, not one of the project's papers.</p>`}
+      ${!c.cascade ? `<p class="small" style="margin:6px 0 0">Not compiled yet, so no app and nothing under the hood.</p>` : ''}
+    </div>
+    <div id="hood"></div>`;
+  $('#view').querySelectorAll('[data-go]').forEach(a => a.onclick = () => go(a.dataset.go || null));
+  $('#hoodbtn').onclick = () => go(c.id, !hood);
+  if (hood && c.cascade){ $('#hood').style.display = 'block'; hoodHtml(c); setTimeout(() => $('#hood').scrollIntoView({behavior:'smooth', block:'start'}), 50); }
+}
+
+function hoodHtml(c){
+  const own = c.schemas.filter(s => s.from === c.id), inh = c.schemas.filter(s => s.from !== c.id);
+  const L = c.layers, n = (i) => `<span class="num" style="background:${col(c)}">${i}</span>`;
+  const codeLayer = (i, key, title, sum) => L[key] ? `<div class="layer"><div class="bh">${n(i)}<h3>${title}</h3>${Q(key)}</div>
+      <p class="sum">${sum}</p><details data-file="${L[key].file}"><summary>show the code (${L[key].lines.toLocaleString()} lines)</summary><div class="code">loading…</div></details></div>` : '';
+  $('#hood').innerHTML = `
+    <div class="sec-title"><h3>🔧 Under the hood</h3>${Q('hood')}<span>from the English text to the running app, top to bottom</span></div>
+    <div class="layer"><div class="bh">${n(1)}<h3>The contract, in English</h3>${Q('contract')}</div><p class="sum">The text above: ${c.clauses.length} rules${c.extends.length ? ', on top of ' + c.extends.join(' and ') : ''}.</p></div>
+    <div class="layer"><div class="bh">${n(2)}<h3>Speech acts</h3>${Q('acts')}</div>
+      <p class="sum">${own.length} acts of its own${inh.length ? `, ${inh.length} more from ${[...new Set(inh.map(s => s.from))].join(', ')}` : ''}.</p>
+      ${own.map((s, i) => schemaHtml(s, i < 2)).join('')}
+      ${inh.length ? `<p class="more" id="mt">▸ show the ${inh.length} inherited acts</p><div id="inh" style="display:none">${inh.map(s => schemaHtml(s, false)).join('')}</div>` : ''}
+    </div>
+    <div class="layer"><div class="bh">${n(3)}<h3>Grassroots check</h3>${Q('check')}</div>
+      <p class="sum">The checker's verdict on the speech acts:</p><span class="verdict">${esc(c.verdict)}</span></div>
+    ${codeLayer(4, 'vmat', 'Transactions', 'Each act as an atomic, volition-guarded transaction among its parties (LaTeX).')}
+    ${codeLayer(5, 'platform', 'Platform, in vGLP', "What each person's agent runs: the transactions and the protocol that carries them out.")}
+    ${codeLayer(6, 'glp', 'Platform, in GLP', 'The same, compiled to the language the agents execute.')}
+    <div class="layer last"><div class="bh">${n(7)}<h3>The app</h3>${Q('app')}</div>
+      <p class="sum">Four phones, each with its own agent, live.</p>
+      ${c.live ? `<a class="btn primary" style="background:${col(c)};margin-top:6px" href="${appUrl(c)}" target="_blank" rel="noopener">▶ Open the app</a>` : ''}</div>
+    <p class="small">The layers come from a run of the cascade on the GLP repository at ${esc(D.glpCommit[0].slice(0, 8))} (${esc(D.glpCommit[1])}); the code may lag the text above.</p>`;
+  const mt = $('#mt'); if (mt) mt.onclick = () => { const d = $('#inh'), o = d.style.display === 'none'; d.style.display = o ? '' : 'none'; mt.textContent = (o ? '▾ hide' : '▸ show') + ` the ${inh.length} inherited acts`; };
+  document.querySelectorAll('details[data-file]').forEach(d => d.addEventListener('toggle', async () => {
+    if (!d.open || d.dataset.done) return; d.dataset.done = 1;
+    try { const r = await fetch(d.dataset.file); d.querySelector('.code').textContent = await r.text(); }
+    catch (e){ d.querySelector('.code').textContent = 'Could not load the file.'; }
+  }));
+}
+function schemaHtml(s, open){
+  const willing = s.parties.filter(p => p.endsWith('?')).map(p => p.slice(0, -1));
+  const say = `${s.parties.length === 1 ? 'One person' : s.parties.length + ' roles'}; ${willing.length ? 'needs the will of ' + willing.join(' and ') : 'nobody is asked'}${s.vars.length ? '; values: ' + s.vars.join(', ') : ''}${s.constraint ? '; only if ' + s.constraint : ''}.`;
+  const at = (l, k) => l.map(a => `<span class="atom a-${k}">${esc(a)}</span>`).join('');
+  return `<details class="schema" ${open ? 'open' : ''}><summary><span>${esc(s.head)}</span><span class="fr">${s.from}</span></summary>
+    <div class="say">${esc(say)}</div>
+    <table class="roles"><tr><th>at</th><th>needs · must not have</th><th>gets</th><th>loses</th></tr>
+    ${s.roles.map(r => `<tr><td class="r">${esc(r.role)}</td><td>${at(r.need,'need')}${at(r.not,'not')}</td><td>${at(r.add,'add')}</td><td>${at(r.del,'del')}</td></tr>`).join('')}</table></details>`;
+}
+
+drawGraph(); drawApps(); route();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: grassroots-contracts
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /

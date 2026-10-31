@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grassroots app, live</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--ink:#22211e;--mute:#7a776f;--line:#e4e0d6;
+  --alice:#e0775a;--bob:#3f8f8a;--carol:#8a6bc4;--dave:#d8a23a;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:18px;margin:0}
+header .sub{color:var(--mute);font-size:14px}
+.sp{flex:1}
+.pill{font-size:13px;padding:4px 10px;border-radius:20px;background:#eef3ee;color:#2f6b45}
+.pill.busy{background:#fff4d6;color:#8a6200}
+.pill.bad{background:#f8e3e0;color:#9b2c1d}
+button{font:inherit;cursor:pointer}
+.hb{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 11px;font-size:14px}
+main{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:18px 20px;align-items:start}
+.phone{background:#1f1e1c;border-radius:30px;padding:9px;display:flex;flex-direction:column;min-height:540px}
+.scr{background:#fbfaf6;border-radius:23px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;gap:10px;padding:14px 14px 10px}
+.av{width:34px;height:34px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.name{font-weight:650;text-transform:capitalize}
+.state{font-size:12px;color:var(--mute)}
+.now{padding:0 12px}
+.ask{background:#fff4d6;border-radius:12px;padding:9px 11px;margin:6px 0;font-size:14px}
+.ask .btns{margin-top:7px;display:flex;gap:8px}
+.ask button{border:none;border-radius:8px;padding:5px 14px;color:#fff}
+.yes{background:#3f8f6a}.no{background:#b5523f}
+.pend{background:#eef0f6;border-radius:10px;padding:6px 10px;margin:6px 0;font-size:13px;color:#4a4f66}
+.note{background:#f8e3e0;border-radius:10px;padding:6px 10px;margin:6px 0;font-size:13px}
+.tabs{display:flex;gap:4px;padding:8px 10px 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tabs button{border:none;background:none;padding:6px 9px;border-bottom:2px solid transparent;color:var(--mute);font-size:13px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+.list{list-style:none;margin:0;padding:6px 14px;font-size:14px;min-height:60px}
+.list li{padding:4px 0;border-bottom:1px dashed var(--line)}
+.empty{color:#b2aea4;font-size:13px;padding:10px 14px}
+.acts{padding:8px 12px 12px;margin-top:auto;border-top:1px solid var(--line)}
+.acts .lbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.ab{border:1px solid #cfcab9;background:#fff;border-radius:16px;padding:4px 12px;margin:3px 4px 3px 0;font-size:13px}
+.ab:disabled{opacity:.35;cursor:default}
+.form{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px;margin-top:6px}
+.form label{display:block;font-size:12px;color:var(--mute);margin-top:4px}
+.form select,.form input{width:100%;font:inherit;font-size:14px;padding:5px 7px;border:1px solid var(--line);border-radius:7px}
+.form .go{margin-top:8px;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:5px 14px}
+.raw{font:11px var(--mono);white-space:pre-wrap;color:var(--mute);padding:0 14px 10px}
+details summary{cursor:pointer;font-size:12px;color:var(--mute);padding:4px 14px}
+#who{display:none;gap:6px;padding:10px 20px 0}
+#who button{border:1px solid var(--line);background:#fff;border-radius:16px;padding:4px 12px;text-transform:capitalize}
+#who button.on{background:var(--ink);color:#fff}
+#net{padding:0 20px 24px}
+#netlog{font:12px var(--mono);white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;max-height:240px;overflow:auto}
+.hint{color:var(--mute);font-size:14px;padding:0 20px}
+@media (max-width:1100px){main{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){main{grid-template-columns:1fr}#who{display:flex}.phone{display:none}.phone.sel{display:flex}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" id="back" style="text-decoration:none;color:var(--mute);font-size:14px">← contracts</a><h1 id="title">…</h1><span class="sub">live · four people, each with their own agent</span>
+  <span class="sp"></span>
+  <span id="day"></span>
+  <span id="status" class="pill busy">connecting…</span>
+  <button class="hb" id="reset">Start over</button>
+</header>
+<p class="hint" id="hint">Everyone starts with no identity. Tap <b>Establish</b> on a phone, then meet, befriend, trade… Each tap is a real act of the compiled platform, so it takes a moment.</p>
+<div id="who"></div>
+<main id="phones"></main>
+<section id="net"><details><summary>What passed between the agents on the network</summary><div id="netlog"></div></details></section>
+<script>
+const C = (new URLSearchParams(location.search).get('c') || 'gsg').toLowerCase();
+const PERSONS = ['alice','bob','carol','dave'];
+let SPEC = null, ST = null, VER = -1, SEL = 'alice';
+const ui = {}; PERSONS.forEach(p => ui[p] = {tab: null, form: null});
+const used = {};
+const S = (f, ...a) => ({f, a});
+const isS = (t, f) => t && typeof t === 'object' && !Array.isArray(t) && t.f === f;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s => String(s).charAt(0).toUpperCase() + String(s).slice(1);
+function show(t){
+  if (Array.isArray(t)) return '[' + t.map(show).join(', ') + ']';
+  if (t && typeof t === 'object' && 'f' in t){
+    if (t.f === 'speech' && isS(t.a[0], 'utterance')) return '“' + t.a[0].a[0] + '”';
+    if (t.f === 'speech') return show(t.a[0]) + ' via ' + cap(t.a[1]);
+    if (t.f === 'dot' && isS(t.a[0], 'community')) return show(t.a[1]) + ' (' + cap(t.a[0].a[0]) + "'s)";
+    if (t.f === 'community') return cap(t.a[0]) + "'s";
+    if (t.f === 'sgn') return show(t.a[0]) + ' ✍' + cap(t.a[1]);
+    return t.f.replace(/_/g,' ') + '(' + t.a.map(show).join(', ') + ')';
+  }
+  return PERSONS.includes(t) ? cap(t) : String(t);
+}
+const api = p => `/api/${C}/${p}`;
+
+function screen(p){
+  const cs = (ST && ST.persons[p]) || {};
+  let view = null, notes = [], menu = null, asks = [];
+  for (const [id, v] of Object.entries(cs)){
+    if (isS(v, 'output')){ for (const x of v.a[0]){ if (isS(x, 'view')){ view = x; notes = []; } else if (x && x.f) notes.push(x); } }
+    else if (isS(v, 'menu_w')){ const m = v.a[0]; if (!used[p+':'+id]) menu = {id: +id, path: m.a[2].a[0]}; }
+    else if (isS(v, 'approval_w')){ const ap = v.a[0]; if (!used[p+':'+id]) asks.push({id: +id, path: ap.a[ap.a.length-1].a[0], at: ap.a[0], words: ap.a[1]}); }
+  }
+  const atoms = view ? view.a[0] : [], pending = view ? view.a[2] : [], tabs = view ? view.a[3] : [];
+  return {view, notes, menu, asks, atoms, pending, tabs, identity: atoms.includes('identity')};
+}
+function words(ws){
+  if (!Array.isArray(ws)) return '';
+  return ws.map(w => isS(w,'text') ? esc(w.a[0]) : isS(w,'person') ? '<b>'+esc(cap(w.a[0]))+'</b>'
+    : isS(w,'named') ? ' · '+esc(w.a[0])+': <b>'+esc(show(w.a[1]))+'</b>' : isS(w,'valued') ? ' · '+esc(w.a[0])+': '+esc(w.a[1]) : esc(show(w))).join('');
+}
+async function act(p, id, path, value){
+  used[p+':'+id] = true; render();
+  await fetch(api('act'), {method:'POST', body: JSON.stringify({person: p, id, path, value})});
+}
+
+/* variants of one button (swap_cc, swap_cb, barter_ic, …): fields named by kind and side */
+const KIND = {c: 'coin', b: 'bond', i: 'item'};
+const suffix = prop => { const m = prop.name.match(/_([cbi]{1,2})$/); return m ? m[1] : null; };
+function variantLabel(prop, i){
+  const sx = suffix(prop); if (!sx || !SPEC.proposals.some(y => y !== prop && y.label === prop.label)) return null;
+  const roles = SPEC.proposals.length && prop.act ? Math.max(prop.act.me, ...(prop.act.persons || [1])) : 2;
+  const head = prop.args.slice(0); const peers = head.map((t, k) => t === 'Peer' && k + 1 > 2 ? k + 1 : null).filter(Boolean);
+  if (!peers.length) return null;
+  const sides = sx.length === 2 ? [[peers[0], 'given', sx[0]], [peers[1] || 99, 'wanted', sx[1]]] : [[peers[0], '', sx[0]]];
+  const side = [...sides].reverse().find(sd => i >= sd[0]); if (!side) return null;
+  const kind = KIND[side[2]], off = i - side[0];
+  const w = off === 0 ? (kind === 'item' ? 'maker' : 'issuer') : kind === 'item' ? 'item' : kind === 'bond' ? (off === 1 ? 'maturity' : 'amount') : 'amount';
+  return (w + ' ' + side[1]).trim();
+}
+const variantName = prop => { const sx = suffix(prop); return sx ? (sx.length === 2 ? `${KIND[sx[0]]} for ${KIND[sx[1]]}` : KIND[sx[0]]) : prop.name; };
+
+/* ---- the acts a person can propose, from the platform's menu declaration ---- */
+const fn = a => typeof a === 'string' ? a : a.f;
+const argsOf = a => typeof a === 'string' ? [] : a.a;
+function enabled(prop, s){
+  const a = prop.act; if (!a) return true;
+  for (const [f, args] of a.req) if (!args.length && !s.atoms.includes(f)) return false;
+  for (const [f, args] of a.forb) if (!args.length && s.atoms.includes(f)) return false;
+  return true;
+}
+function optionsFor(prop, i, s, p){
+  const a = prop.act || {persons:[], groups:[], items:[], picks:[]};
+  const type = prop.args[i-1];
+  const src = [...a.items, ...a.picks].find(x => x[0] === i);
+  if (src){
+    const out = [];
+    s.atoms.filter(t => fn(t) === src[1]).forEach(t => {
+      const v = argsOf(t).find(x => type === 'Peer' ? typeof x === 'string' : (typeof x === 'object' && !Array.isArray(x)));
+      if (v !== undefined && !out.some(o => JSON.stringify(o) === JSON.stringify(v))) out.push(v);
+    });
+    return out;
+  }
+  if (type === 'Peer') return PERSONS.filter(q => q !== p);
+  return null;
+}
+function formFields(prop, s, p){
+  const a = prop.act || {me: 1, groups: []};
+  const out = [];
+  prop.args.forEach((type, k) => {
+    const i = k + 1;
+    if (i === (a.me || 1)) return;
+    const g = (a.groups || []).find(x => x[0] === i || x[1] === i);
+    if (g){ if (g[0] === i) out.push({i, g, kind: 'group', label: 'group', opts: s.atoms.filter(t => fn(t) === 'member').map(t => t.a[0])}); return; }
+    const label = variantLabel(prop, i) || prop.fields[i] || (type === 'Peer' ? 'person' : type === 'Integer' ? 'number' : type === 'Speech' ? 'text' : type);
+    const opts = optionsFor(prop, i, s, p);
+    if (opts) out.push({i, kind: 'pick', label, opts});
+    else if (type === 'Integer') out.push({i, kind: 'num', label});
+    else out.push({i, kind: 'text', label});
+  });
+  return out;
+}
+function build(prop, p, vals){
+  const a = prop.act || {me: 1, groups: []};
+  const args = prop.args.map(() => null);
+  args[(a.me || 1) - 1] = p;
+  for (const f of vals){
+    if (f.kind === 'group'){ const cn = f.v; args[f.g[0]-1] = cn.a[0].a[0]; args[f.g[1]-1] = cn.a[1]; }
+    else if (f.kind === 'num') args[f.i-1] = parseInt(f.v, 10);
+    else if (f.kind === 'text'){
+      // an item is named by its maker: a text right after a maker field is spoken by that maker
+      const prev = vals.find(g => g.i === f.i - 1 && /maker/.test(g.label));
+      args[f.i-1] = S('speech', S('utterance', f.v), prev && typeof prev.v === 'string' ? prev.v : p);
+    }
+    else args[f.i-1] = f.v;
+  }
+  if (args.some(x => x === null || (typeof x === 'number' && isNaN(x)) || x === '')) return null;
+  return S('propose', S(prop.name, ...args));
+}
+
+function render(){
+  if (!ST || !SPEC) return;
+  const st = $('#status');
+  st.textContent = ST.status === 'ready' ? 'ready' : ST.status === 'working' ? 'agents working…' : ST.status;
+  st.className = 'pill' + (ST.status === 'ready' ? '' : ST.status.startsWith('failed') ? ' bad' : ' busy');
+  $('#day').innerHTML = ST.day !== undefined ? `day ${ST.day} <button class="hb" id="nextday">next day ▸</button>` : '';
+  if ($('#nextday')) $('#nextday').onclick = () => fetch(api('day'), {method:'POST'});
+  const focus = document.activeElement && document.activeElement.id;
+  $('#phones').innerHTML = '';
+  PERSONS.forEach(p => $('#phones').appendChild(phone(p)));
+  $('#who').innerHTML = PERSONS.map(p => `<button class="${p===SEL?'on':''}" data-who="${p}">${p}</button>`).join('');
+  $('#who').querySelectorAll('button').forEach(b => b.onclick = () => { SEL = b.dataset.who; render(); });
+  $('#netlog').textContent = (ST.net || []).map(show).join('\n') || '—';
+  if (focus && document.getElementById(focus)) document.getElementById(focus).focus();
+}
+const $ = s => document.querySelector(s);
+function phone(p){
+  const s = screen(p), d = document.createElement('div');
+  d.className = 'phone' + (p === SEL ? ' sel' : '');
+  const tabs = s.tabs.map(t => ({label: t.a[0], pred: t.a[1], counted: t.a.length > 2}));
+  if (!ui[p].tab || !tabs.some(t => t.label === ui[p].tab)) ui[p].tab = tabs[0] && tabs[0].label;
+  const tab = tabs.find(t => t.label === ui[p].tab);
+  let h = `<div class="scr"><div class="top"><div class="av" style="background:var(--${p})">${p[0].toUpperCase()}</div>
+    <div><div class="name">${p}</div><div class="state">${s.view ? (s.identity ? 'identity established' : 'no identity yet') : 'starting…'}</div></div></div>`;
+  h += '<div class="now">';
+  for (const a of s.asks) h += `<div class="ask">${words(a.words) || esc(show(a.at))}<div class="btns">
+      <button class="yes" data-ans="yes" data-id="${a.id}" data-path='${JSON.stringify(a.path)}'>Yes</button>
+      <button class="no" data-ans="no" data-id="${a.id}" data-path='${JSON.stringify(a.path)}'>No</button></div></div>`;
+  for (const c of s.pending) h += `<div class="pend">⏳ ${esc(show(c))}</div>`;
+  for (const n of s.notes) h += `<div class="note">${isS(n,'refused') ? `Not done: ${esc(show(n.a[0]))} — ${esc(show(n.a[2]))}` : esc(show(n))}</div>`;
+  h += '</div>';
+  if (tabs.length){
+    h += `<div class="tabs">${tabs.map(t => `<button data-tab="${esc(t.label)}" class="${t.label===ui[p].tab?'on':''}">${esc(t.label)}</button>`).join('')}</div>`;
+    let rows = s.atoms.filter(a => fn(a) === tab.pred).map(a => argsOf(a).map(show).join(' · ') || tab.pred);
+    if (tab.counted){ const m = {}; rows.forEach(r => m[r] = (m[r]||0) + 1); rows = Object.entries(m).map(([r,n]) => `${n} × ${r}`); }
+    h += rows.length ? `<ul class="list">${rows.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : `<div class="empty">nothing here yet</div>`;
+  }
+  // acts of this tab
+  const props = SPEC.proposals.filter(x => !x.act || x.act.tab === ui[p].tab || (!s.identity && x.name === 'establish'));
+  const seen = new Set();
+  h += `<div class="acts"><div class="lbl">${s.menu ? 'do something' : 'your agent is busy…'}</div>`;
+  for (const x of props){
+    if (seen.has(x.label)) continue; seen.add(x.label);
+    h += `<button class="ab" data-prop="${x.name}" ${s.menu && enabled(x, s) ? '' : 'disabled'}>${esc(x.label)}</button>`;
+  }
+  const f = ui[p].form && SPEC.proposals.find(x => x.name === ui[p].form);
+  if (f && s.menu){
+    const fields = formFields(f, s, p);
+    const vars = SPEC.proposals.filter(y => y.label === f.label);
+    h += `<div class="form"><b>${esc(f.label)}</b>` + (vars.length > 1 ? `<label>kind</label><select data-variant="1">${vars.map(v => `<option value="${v.name}" ${v.name === f.name ? 'selected' : ''}>${esc(variantName(v))}</option>`).join('')}</select>` : '') + fields.map(fl => {
+      const id = `${p}-${f.name}-${fl.i}`;
+      if (fl.kind === 'group' || fl.kind === 'pick') return `<label>${esc(fl.label)}</label><select id="${id}">${fl.opts.map((o,j) => `<option value="${j}">${esc(show(o))}</option>`).join('') || '<option value="">— none —</option>'}</select>`;
+      return `<label>${esc(fl.label)}</label><input id="${id}" ${fl.kind === 'num' ? 'type="number" value="1"' : 'placeholder="type…"'}>`;
+    }).join('') + `<button class="go" data-go="${f.name}">Propose</button></div>`;
+  }
+  h += `</div><details><summary>machine state</summary><div class="raw">${esc(s.atoms.map(show).join('\n'))}</div></details></div>`;
+  d.innerHTML = h;
+  d.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { ui[p].tab = b.dataset.tab; ui[p].form = null; render(); });
+  d.querySelectorAll('[data-ans]').forEach(b => b.onclick = () => act(p, +b.dataset.id, JSON.parse(b.dataset.path), b.dataset.ans));
+  d.querySelectorAll('[data-prop]').forEach(b => b.onclick = () => {
+    const x = SPEC.proposals.find(y => y.name === b.dataset.prop);
+    if (!formFields(x, s, p).length){ const v = build(x, p, []); if (v && s.menu){ ui[p].form = null; act(p, s.menu.id, s.menu.path, v); } return; }
+    const open = ui[p].form && SPEC.proposals.find(y => y.name === ui[p].form);
+    ui[p].form = open && open.label === x.label ? null : x.name; render();
+  });
+  d.querySelectorAll('[data-variant]').forEach(e => e.onchange = () => { ui[p].form = e.value; render(); });
+  d.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
+    const x = SPEC.proposals.find(y => y.name === b.dataset.go);
+    const vals = formFields(x, s, p).map(fl => {
+      const e = document.getElementById(`${p}-${x.name}-${fl.i}`);
+      return {...fl, v: (fl.kind === 'group' || fl.kind === 'pick') ? (e.value === '' ? null : fl.opts[+e.value]) : e.value.trim()};
+    });
+    if (vals.some(v => v.v === null || v.v === '')) return;
+    const v = build(x, p, vals); if (!v) return;
+    ui[p].form = null; act(p, s.menu.id, s.menu.path, v);
+  });
+  return d;
+}
+async function poll(){
+  for (;;){
+    try {
+      const r = await fetch(api('state') + '?since=' + VER); const st = await r.json();
+      if (st.version !== VER){ ST = st; VER = st.version; render(); }
+    } catch (e){ $('#status').textContent = 'reconnecting…'; await new Promise(r => setTimeout(r, 2000)); }
+  }
+}
+$('#reset').onclick = async () => { $('#status').textContent = 'starting over…'; await fetch(api('reset'), {method:'POST'}); VER = -1; for (const k in used) delete used[k]; };
+fetch(`specs/${C}.json`).then(r => r.json()).then(s => { SPEC = s; $('#title').textContent = `${s.id}: ${s.title}`; $('#back').href = '/#' + s.id; document.title = `${s.id} live`; render(); poll(); });
+</script>
+</body>
+</html>
