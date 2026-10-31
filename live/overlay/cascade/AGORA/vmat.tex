@@ -2545,6 +2545,7 @@ knows
 ,\\
 &
 \text{provided } 
+\{
 \mathit{
 offered
 }
@@ -2557,10 +2558,25 @@ x
 ,
 n
 )
- \notin c_
+,
+\mathit{
+withdrawn_offer
+}
+(
+u
+,
+x
+,
+\Alice
+,
+n
+)
+\}
+ \cap c_
 {
 \Bob
 }
+ = \emptyset
 ,\\
 &
 \text{guarded by } \{
@@ -3002,6 +3018,7 @@ knows
 ,\\
 &
 \text{provided } 
+\{
 \mathit{
 wanted
 }
@@ -3012,10 +3029,23 @@ x
 ,
 n
 )
- \notin c_
+,
+\mathit{
+withdrawn_want
+}
+(
+x
+,
+\Alice
+,
+n
+)
+\}
+ \cap c_
 {
 \Bob
 }
+ = \emptyset
 ,\\
 &
 \text{guarded by } \{
@@ -3417,6 +3447,7 @@ x
 ,\\
 &
 \text{provided } 
+\{
 \mathit{
 offered
 }
@@ -3429,10 +3460,25 @@ x
 ,
 n
 )
- \notin c_
+,
+\mathit{
+withdrawn_offer
+}
+(
+u
+,
+x
+,
+\Alice
+,
+n
+)
+\}
+ \cap c_
 {
 \Alice
 }
+ = \emptyset
 ,\\
 &
 \text{guarded by } \{
@@ -3510,6 +3556,7 @@ n
 ,\\
 &
 \text{provided } 
+\{
 \mathit{
 wanted
 }
@@ -3520,10 +3567,23 @@ x
 ,
 n
 )
- \notin c_
+,
+\mathit{
+withdrawn_want
+}
+(
+x
+,
+\Alice
+,
+n
+)
+\}
+ \cap c_
 {
 \Alice
 }
+ = \emptyset
 ,\\
 &
 \text{guarded by } \{
@@ -4150,7 +4210,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4171,6 +4231,21 @@ n
 ,
 \mathit{
 wall_offer
+}
+(
+u
+,
+x
+,
+\Alice
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_offer
 }
 (
 u
@@ -4212,7 +4287,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4233,6 +4308,21 @@ n
 ,
 \mathit{
 wall_offer
+}
+(
+u
+,
+x
+,
+\Alice
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_offer
 }
 (
 u
@@ -4419,7 +4509,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4438,6 +4528,19 @@ n
 ,
 \mathit{
 wall_want
+}
+(
+x
+,
+\Alice
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_want
 }
 (
 x
@@ -4475,7 +4578,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4494,6 +4597,19 @@ n
 ,
 \mathit{
 wall_want
+}
+(
+x
+,
+\Alice
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_want
 }
 (
 x
@@ -4664,7 +4780,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4685,6 +4801,21 @@ n
 ,
 \mathit{
 wall_offer
+}
+(
+u
+,
+x
+,
+\Bob
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_offer
 }
 (
 u
@@ -4726,7 +4857,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -4747,6 +4878,21 @@ n
 ,
 \mathit{
 wall_offer
+}
+(
+u
+,
+x
+,
+\Bob
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_offer
 }
 (
 u
@@ -5038,7 +5184,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -5057,6 +5203,19 @@ n
 ,
 \mathit{
 wall_want
+}
+(
+x
+,
+\Bob
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_want
 }
 (
 x
@@ -5094,7 +5253,7 @@ c'_
 \Alice
 }
  := 
-c_
+(c_
 {
 \Alice
 }
@@ -5113,6 +5272,19 @@ n
 ,
 \mathit{
 wall_want
+}
+(
+x
+,
+\Bob
+,
+n
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrawn_want
 }
 (
 x

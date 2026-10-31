@@ -10,7 +10,7 @@ introduce(Alice?, Bob?; c) :
     at Bob: identity, knows(Alice), +knows(c)
 
 recommend(Alice?, Bob; s) :
-    at Alice: identity, knows(Bob), not recommended(Bob, s), +recommended(Bob, s)
+    at Alice: identity, knows(Bob), not recommended(Bob, s), not withdrew(Bob, s), +recommended(Bob, s)
     at Bob: identity, +endorsement(Alice, s)
 
 show(Bob?, Carol; a, s) :
@@ -19,5 +19,5 @@ show(Bob?, Carol; a, s) :
 
 withdraw_recommendation(Bob, Alice?, Bob[shown(*, Alice, s)]; s) :
     at Bob: identity, -endorsement(Alice, s)
-    at Alice: identity, -recommended(Bob, s)
+    at Alice: identity, +withdrew(Bob, s), -recommended(Bob, s)
     at Bob[shown(*, Alice, s)]: identity, -vouched(Bob, Alice, s)

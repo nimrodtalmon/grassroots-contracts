@@ -5,12 +5,12 @@
 % Schemas: DAO.glp beside this file.
 DAO: Grassroots DAO
 Alice and Bob are persons.  DAO extends GKK.
-1. ■ Founding.  Alice may found a DAO, of which they are the steward and first member.
-2. ■ Joining.  Alice, the steward of a DAO, may admit Bob, whom they know, by an act of both.
-3. ■ Proposing.  A member of a DAO may make a proposal to it; its steward records it and delivers it to every other member.
-4. ■ Voting.  A member may vote for or against a proposal of their DAO, once and before it is decided; its steward records the vote.
-5. ■ Deciding.  The steward may decide a proposal, passed or rejected, once, and delivers the decision to every other member.
-6. ○ Majority.  The steward decides a proposal passed exactly when more than half of the members voted for it.
+1. ■ Founding.  Alice may found a DAO under a name of their own not used before; Alice is its steward and first member.
+2. ■ Joining.  Alice, the steward of a DAO, may admit Bob, whom they know and who is not yet a member, by an act of both.
+3. ■ Proposing.  A member of a DAO may make a proposal to it; its steward records it and delivers it to every member but the steward, the proposer included.
+4. ■ Voting.  A member who holds a proposal of their DAO may vote for or against it, once and before the steward decides it; the steward records the vote.
+5. ■ Deciding.  The steward may decide a proposal, passed or rejected, once and at any time, even before any vote; the steward delivers the decision to every member but the steward.
+6. ○ Majority.  The steward decides a proposal only once more than half of the DAO's members at that time have voted the same way on it, and passes it exactly when they voted for it.
 Pragmas
 DAOs: the DAOs Alice is a member of.
 Proposals: the proposals Alice sees.

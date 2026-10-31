@@ -5,9 +5,9 @@
 % Schemas: REC.glp beside this file, written by tools/contracts.py.
 REC: Recommendations
 Alice, Bob and Carol are persons.  REC extends GKK.
-1. ◆ Recommending.  Alice may recommend Bob, whom they know, for something, a skill or a service; Bob keeps the recommendation.
-2. ■ Showing.  Bob may show a recommendation they hold to Carol, whom they know; Carol then sees who recommended Bob, and for what.
-3. ■ Withdrawing.  Alice may withdraw a recommendation; it is gone from Bob and from everyone Bob showed it to.
+1. ◆ Recommending.  Alice may recommend Bob, whom they know, for something, a skill or a service, once for each thing; Bob is not asked and keeps the recommendation.
+2. ■ Showing.  Bob may show a recommendation they hold to Carol, whom they know, once; Carol then sees who recommended Bob and for what, but does not thereby come to know the recommender.
+3. ■ Withdrawing.  Alice may withdraw a recommendation; it is gone from Bob and from everyone Bob showed it to, and Alice may not make it again.
 Pragmas
 Given: the recommended people Alice vouches for.
 Received: the endorsements Alice holds.

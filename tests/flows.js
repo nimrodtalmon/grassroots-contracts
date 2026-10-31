@@ -59,6 +59,10 @@ const BASE = process.env.BASE || 'http://localhost:8090';
     console.log('STEWARD delegations', await list(0, 'Delegations'), '| BOB delegate', await list(1, 'Delegate'));
     await step(1, 'Delegate', 'revoke');
     console.log('after revoke: STEWARD', await list(0, 'Delegations'), '| BOB', await list(1, 'Delegate'));
+    await step(0, 'Delegate', 'delegate_own', {sel: {delegate: 'Bob'}});
+    console.log('steward delegates: STEWARD', await list(0, 'Delegations'), '| own', await list(0, 'Delegate'));
+    await step(0, 'Delegate', 'revoke_own');
+    console.log('steward revokes: STEWARD', await list(0, 'Delegations'));
   }
   if (c === 'stay') {
     await step(0, 'Places', 'list_place', {fill: [[0, 'cabin']]});
@@ -71,6 +75,13 @@ const BASE = process.env.BASE || 'http://localhost:8090';
     await nextDay(); await nextDay(); await nextDay();
     await step(1, 'Places', 'review', {fill: [[0, 'lovely']]});
     console.log('ALICE reviews', await list(0, 'Reviews'));
+    await step(1, 'Places', 'book', {sel: {person: 'Alice'}, fill: [[0, 'cabin'], [1, '9'], [2, '1']]}); await yes(0);
+    console.log('booked night 9: ALICE guests', await list(0, 'Guests'), '| BOB coins', await list(1, 'Coins'));
+    await tab(0, 'Places'); await ph(0).locator('[data-prop="cancel"]').click(); await p.waitForTimeout(300);
+    console.log('CANCEL FORM', (await ph(0).locator('.form').innerText()).replace(/\n/g, ' / '));
+    await ph(0).locator('[data-prop="cancel"]').click(); await p.waitForTimeout(200);
+    await step(0, 'Places', 'cancel');
+    console.log('after cancel: ALICE guests', await list(0, 'Guests'), '| BOB stays', await list(1, 'Stays'), '| BOB coins', await list(1, 'Coins'));
   }
   if (c === 'lib') {
     await step(0, 'Shelf', 'shelve', {fill: [[0, 'drill']]});
@@ -99,6 +110,8 @@ const BASE = process.env.BASE || 'http://localhost:8090';
     console.log('CAROL seen', await list(2, 'Seen'));
     await step(0, 'Given', 'withdraw_recommendation');
     console.log('after withdraw: BOB', await list(1, 'Received'), '| CAROL', await list(2, 'Seen'));
+    await step(0, 'Given', 'recommend', {sel: {person: 'Bob'}, fill: [[0, 'plumbing']]});
+    console.log('re-recommend (should be refused): NOTES', await ph(0).locator('.note').allTextContents(), '| BOB', await list(1, 'Received'));
   }
   await p.screenshot({path: `/home/claude/build/flow-${c}.png`});
   console.log(c, 'errors', errs);

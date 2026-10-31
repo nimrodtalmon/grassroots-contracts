@@ -256,6 +256,7 @@ identity
 ,\\
 &
 \text{provided } 
+\{
 \mathit{
 recommended
 }
@@ -264,10 +265,21 @@ recommended
 ,
 s
 )
- \notin c_
+,
+\mathit{
+withdrew
+}
+(
+\Bob
+,
+s
+)
+\}
+ \cap c_
 {
 \Alice
 }
+ = \emptyset
 ,\\
 &
 \text{guarded by } \{
@@ -484,7 +496,7 @@ c'_
 \Bob
 }
  := 
-c_
+(c_
 {
 \Bob
 }
@@ -492,6 +504,17 @@ c_
 \{
 \mathit{
 recommended
+}
+(
+\Alice
+,
+s
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrew
 }
 (
 \Alice
@@ -525,7 +548,7 @@ c'_
 \Bob
 }
  := 
-c_
+(c_
 {
 \Bob
 }
@@ -547,6 +570,17 @@ vouched
 \Alice
 ,
 \Bob
+,
+s
+)
+\}
+) \uplus 
+\{
+\mathit{
+withdrew
+}
+(
+\Alice
 ,
 s
 )

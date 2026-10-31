@@ -20,46 +20,46 @@ admit(Alice?, Bob?; n) :
 
 propose(Bob?, Alice; x, n) :
     at Bob: identity, member(<Alice>.n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), knows(Bob), not proposal(x, Bob, n), +proposal(x, Bob, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), knows(Bob), not proposal(x, Bob, <Alice>.n), +proposal(x, Bob, <Alice>.n)
 
 propose_own(Alice?; x, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), not proposal(x, Alice, n), +proposal(x, Alice, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), not proposal(x, Alice, <Alice>.n), +proposal(x, Alice, <Alice>.n)
 
 deliver_proposal(Alice, Bob; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), listed(Bob, n), knows(o), not sent(Bob, x, n), +sent(Bob, x, n)
-    at Bob: identity, member(<Alice>.n), +proposal(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), listed(Bob, n), knows(o), not sent(Bob, x, o, n), +sent(Bob, x, o, n)
+    at Bob: identity, member(<Alice>.n), +proposal(x, o, <Alice>.n)
 
 deliver_own_proposal(Alice, Bob; x, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, Alice, n), listed(Bob, n), not sent(Bob, x, n), +sent(Bob, x, n)
-    at Bob: identity, member(<Alice>.n), +proposal(x, Alice, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, Alice, <Alice>.n), listed(Bob, n), not sent(Bob, x, Alice, n), +sent(Bob, x, Alice, n)
+    at Bob: identity, member(<Alice>.n), +proposal(x, Alice, <Alice>.n)
 
 vote_for(Bob?, Alice; x, o, n) :
-    at Bob: identity, member(<Alice>.n), proposal(x, o, n), not voted(x, o, n), +voted(x, o, n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, n), not counted(x, o, Bob, n), not decided(x, o, n), +yes_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+    at Bob: identity, member(<Alice>.n), proposal(x, o, <Alice>.n), not voted(x, o, <Alice>.n), +voted(x, o, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Bob, n), +counted(x, o, Bob, n)
 
 vote_own_for(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not counted(x, o, Alice, n), not voted(x, o, n), not decided(x, o, n), +yes_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n)
 
 vote_against(Bob?, Alice; x, o, n) :
-    at Bob: identity, member(<Alice>.n), proposal(x, o, n), not voted(x, o, n), +voted(x, o, n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, n), not counted(x, o, Bob, n), not decided(x, o, n), +no_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+    at Bob: identity, member(<Alice>.n), proposal(x, o, <Alice>.n), not voted(x, o, <Alice>.n), +voted(x, o, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +no_vote(x, o, Bob, n), +counted(x, o, Bob, n)
 
 vote_own_against(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not counted(x, o, Alice, n), not voted(x, o, n), not decided(x, o, n), +no_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +no_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n)
 
 pass(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not decided(x, o, n), +passed_proposal(x, o, n), +decided(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +passed_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 deliver_pass(Alice, Bob; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, o, n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
-    at Bob: identity, member(<Alice>.n), +passed_proposal(x, o, n), +decided(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, o, <Alice>.n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
+    at Bob: identity, member(<Alice>.n), +passed_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 reject(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not decided(x, o, n), +rejected_proposal(x, o, n), +decided(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +rejected_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 deliver_reject(Alice, Bob; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), rejected_proposal(x, o, n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
-    at Bob: identity, member(<Alice>.n), +rejected_proposal(x, o, n), +decided(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), rejected_proposal(x, o, <Alice>.n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
+    at Bob: identity, member(<Alice>.n), +rejected_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 mint_coin(Alice?; k) :
     at Alice: identity, +k.coin(Alice)
@@ -141,8 +141,8 @@ fund_own(Alice?; u, k, n) :
     at Alice: identity, member(<Alice>.n), listed(Alice, n), +k.dao_coin(u, n), -k.coin(u)
 
 grant(Alice?, Bob; x, u, k, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Bob, n), not granted(x, Bob, n), +granted(x, Bob, n), -k.dao_coin(u, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Bob, <Alice>.n), not granted(x, Bob, n), +granted(x, Bob, n), -k.dao_coin(u, n)
     at Bob: identity, +k.coin(u), +knows(u)
 
 grant_own(Alice?; x, u, k, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Alice, n), not granted(x, Alice, n), +granted(x, Alice, n), +k.coin(u), -k.dao_coin(u, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Alice, <Alice>.n), not granted(x, Alice, n), +granted(x, Alice, n), +k.coin(u), -k.dao_coin(u, n)

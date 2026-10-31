@@ -103,12 +103,12 @@ contract_named(stay, environment([today],
 %% STAY:2, Booking: Bob pays k Alice-coins for the night d, later than Alice's date t.
     nschema(book, ['Bob', 'Alice'], [svar(x), num(d), num(k), num(t)], gt(num(d), num(t)),
        [rs(guarded, [atom(stay, [svar(x), role(2), num(d)])], [times(num(k), atom(coin, [role(2)]))], [atom(identity, []), atom(knows, [role(2)])], []),
-        rs(guarded, [atom(booked, [svar(x), num(d)]), atom(guest, [role(1), svar(x), num(d)]), times(num(k), atom(paid, [svar(x), num(d)]))], [], [atom(identity, []), atom(place, [svar(x)]), atom(date, [num(t)])], [atom(booked, [svar(x), num(d)])])]),
-%% STAY:3, Cancelling, before the night: Bob is paid back in Alice-coins.
+        rs(guarded, [atom(booked, [svar(x), num(d)]), atom(guest, [role(1), svar(x), num(d), num(k)])], [], [atom(identity, []), atom(place, [svar(x)]), atom(date, [num(t)])], [atom(booked, [svar(x), num(d)])])]),
+%% STAY:3, Cancelling, before the night: Bob is paid back the price k, in Alice-coins.
     nschema(cancel, ['Alice', 'Bob'], [svar(x), num(d), num(k), num(t)], gt(num(d), num(t)),
-       [rs(guarded, [], [atom(booked, [svar(x), num(d)]), atom(guest, [role(2), svar(x), num(d)]), times(num(k), atom(paid, [svar(x), num(d)]))], [atom(identity, []), atom(date, [num(t)])], []),
+       [rs(guarded, [], [atom(booked, [svar(x), num(d)]), atom(guest, [role(2), svar(x), num(d), num(k)])], [atom(identity, []), atom(date, [num(t)])], []),
         rs(unguarded, [times(num(k), atom(coin, [role(1)]))], [atom(stay, [svar(x), role(1), num(d)])], [atom(identity, [])], [])]),
 %% STAY:4, Reviewing, after the night, once.
     nschema(review, ['Bob', 'Alice'], [svar(x), num(d), svar(r), num(t)], le(num(d), num(t)),
-       [rs(guarded, [atom(reviewed, [svar(x), num(d)])], [], [atom(identity, []), atom(stay, [svar(x), role(2), num(d)]), atom(date, [num(t)])], [atom(reviewed, [svar(x), num(d)])]),
-        rs(unguarded, [atom(review, [svar(x), role(1), svar(r)])], [], [atom(identity, []), atom(guest, [role(1), svar(x), num(d)])], [])])])).
+       [rs(guarded, [atom(reviewed, [svar(x), role(2), num(d)])], [], [atom(identity, []), atom(stay, [svar(x), role(2), num(d)]), atom(date, [num(t)])], [atom(reviewed, [svar(x), role(2), num(d)])]),
+        rs(unguarded, [atom(review, [svar(x), role(1), svar(r)])], [], [atom(identity, [])], [])])])).

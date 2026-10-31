@@ -46,14 +46,14 @@ contract_named(rec,
         rs(guarded, [atom(knows, [pvar(c)])], [], [atom(identity, []), atom(knows, [role(1)])], [])]),
 %% REC:1, Recommending: Alice recommends Bob for s.
     schema(recommend, ['Alice', 'Bob'], [svar(s)],
-       [rs(guarded, [atom(recommended, [role(2), svar(s)])], [], [atom(identity, []), atom(knows, [role(2)])], [atom(recommended, [role(2), svar(s)])]),
+       [rs(guarded, [atom(recommended, [role(2), svar(s)])], [], [atom(identity, []), atom(knows, [role(2)])], [atom(recommended, [role(2), svar(s)]), atom(withdrew, [role(2), svar(s)])]),
         rs(unguarded, [atom(endorsement, [role(1), svar(s)])], [], [atom(identity, [])], [])]),
 %% REC:2, Showing: Bob shows Carol that a recommends Bob for s.
     schema(show, ['Bob', 'Carol'], [pvar(a), svar(s)],
        [rs(guarded, [atom(shown, [role(2), pvar(a), svar(s)])], [], [atom(identity, []), atom(endorsement, [pvar(a), svar(s)]), atom(knows, [role(2)])], [atom(shown, [role(2), pvar(a), svar(s)])]),
         rs(unguarded, [atom(vouched, [role(1), pvar(a), svar(s)])], [], [atom(identity, [])], [])]),
-%% REC:3, Withdrawing: from Bob and from every person Bob showed it to.
+%% REC:3, Withdrawing: from Bob and from every person Bob showed it to; withdrew(b, s) keeps Alice from making it again.
     cschema(withdraw_recommendation, ['Bob', 'Alice', 'Bob'], [svar(s)], [],
        [rs(unguarded, [], [atom(endorsement, [role(2), svar(s)])], [atom(identity, [])], []),
-        rs(guarded, [], [atom(recommended, [role(1), svar(s)])], [atom(identity, [])], []),
+        rs(guarded, [atom(withdrew, [role(1), svar(s)])], [atom(recommended, [role(1), svar(s)])], [atom(identity, [])], []),
         crs(listed(1, shown, [role(2), svar(s)]), unguarded, [], [atom(vouched, [role(1), role(2), svar(s)])], [atom(identity, [])], [])])]).

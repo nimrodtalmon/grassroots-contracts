@@ -6,11 +6,11 @@
 AGORA: Grassroots Barter
 Alice, Bob and Carol are persons.  AGORA extends GB.  An instrument is a coin, a bond or an item.
 1. ■ Making.  Alice may make an Alice-item, one of a kind, which they then hold.
-2. ■ Market.  Alice may open a market, of which they are the keeper and first member.
+2. ■ Market.  Alice may open a market under a name of their own not used before; Alice is its keeper and first member.
 3. ■ Joining.  Alice, the keeper of a market, may admit Bob, whom they know, by an act of both; Bob thereby agrees to come to know whoever posts to the market.
-4. ■ Posting.  Bob, a member of a market, may post to its wall an item they hold, or something they want, and so may Alice, its keeper; the keeper sees every post on their own wall and delivers it to every other member, who thereby knows its poster.
-5. ■ Withdrawal.  Bob may withdraw a post of theirs; Alice, the keeper, removes it from their own wall and from the wall of every member it was delivered to.
-6. ■ Trading.  GB's swap and escrow apply to items as to coins and bonds.
+4. ■ Posting.  Bob, a member of a market, may post to its wall an item they hold at the time, or something they want, each at most once, and so may Alice, its keeper; the keeper sees every post on their own wall and delivers it to every other member, the poster included, who thereby knows its poster.
+5. ■ Withdrawal.  Bob may withdraw a post of theirs; Alice, the keeper, removes it from their own wall and from the wall of every member it was delivered to, and Bob may not post it to that market again.
+6. ■ Trading.  GB's swap and escrow apply to items as to coins and bonds; a post is not withdrawn when its item is traded.
 Pragmas
 Items: the items Alice holds.
 Markets: the markets Alice is a member of.

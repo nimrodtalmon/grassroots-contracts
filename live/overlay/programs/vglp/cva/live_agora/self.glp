@@ -207,11 +207,15 @@ offered(Peer, Speech, Peer, Speech)
 ;
 wall_offer(Peer, Speech, Peer, Speech)
 ;
+withdrawn_offer(Peer, Speech, Peer, Speech)
+;
 sent_offer(Peer, Peer, Speech, Peer, Speech)
 ;
 wanted(Speech, Peer, Speech)
 ;
 wall_want(Speech, Peer, Speech)
+;
+withdrawn_want(Speech, Peer, Speech)
 ;
 sent_want(Peer, Speech, Peer, Speech)
 .

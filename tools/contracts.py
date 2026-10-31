@@ -133,9 +133,9 @@ C = []
 c = Contract('FDAO', 'Funded DAO', 'fdao', ['DAO', 'GB'],
     'DAO, Grassroots DAO (programs/dao), and GB, Grassroots Bonds, Currencies\' (programs/currencies/bonds).  Through them it extends GKK; it cites their clauses whole and restates none.',
     'Alice and Bob are persons.  FDAO extends DAO and GB.',
-    [('■', 'Funding', 'A member of a DAO may give coins they hold to it; its steward keeps them apart, as the DAO\'s.'),
-     ('■', 'Granting', 'The steward may pay coins of the DAO to the proposer of a passed proposal, once per proposal.'),
-     ('○', 'Purpose', 'The steward pays out the DAO\'s coins only as grants to passed proposals.')],
+    [('■', 'Funding', 'A member of a DAO may give it coins they hold; its steward, who is not asked, keeps them apart as the DAO\'s, and they leave the DAO only as grants.'),
+     ('■', 'Granting', 'The steward may pay the proposer of a passed proposal, once per proposal, any amount of the DAO\'s coins of one issuer; the proposer is not asked.'),
+     ('○', 'Amount', 'The steward grants a passed proposal the amount it asks for, as far as the DAO\'s coins allow.')],
     ['Treasury: the dao coins Alice keeps.', 'Grants: the granted ones Alice paid.',
      'Funding: Bob [Fund] <issuer> <amount>', '  Alice [Fund own] <issuer> <amount>',
      'Granting: Alice [Grant] <proposal> <issuer> <amount>', '  Alice [Grant own] <proposal> <issuer> <amount>'],
@@ -148,11 +148,11 @@ c.schema('fund_own', ['Alice'], ['p:u', 'n:k', 's:n'],
     [('guarded', ['k*dao_coin(u, n)'], ['k*coin(u)'], [ID, 'member(<1>.n)', 'listed(R1, n)'], [])],
     comment='FDAO:1, the steward gives coins of its own.')
 c.schema('grant', ['Alice', 'Bob'], ['s:x', 'p:u', 'n:k', 's:n'],
-    [('guarded', ['granted(x, R2, n)'], ['k*dao_coin(u, n)'], [ID, 'member(<1>.n)', 'listed(R1, n)', 'passed_proposal(x, R2, n)'], ['granted(x, R2, n)']),
+    [('guarded', ['granted(x, R2, n)'], ['k*dao_coin(u, n)'], [ID, 'member(<1>.n)', 'listed(R1, n)', 'passed_proposal(x, R2, <1>.n)'], ['granted(x, R2, n)']),
      ('unguarded', ['k*coin(u)', 'knows(u)'], [], [ID], [])],
     comment='FDAO:2, Granting: the steward pays the proposer of a passed proposal, once.')
 c.schema('grant_own', ['Alice'], ['s:x', 'p:u', 'n:k', 's:n'],
-    [('guarded', ['granted(x, R1, n)', 'k*coin(u)'], ['k*dao_coin(u, n)'], [ID, 'member(<1>.n)', 'listed(R1, n)', 'passed_proposal(x, R1, n)'], ['granted(x, R1, n)'])],
+    [('guarded', ['granted(x, R1, n)', 'k*coin(u)'], ['k*dao_coin(u, n)'], [ID, 'member(<1>.n)', 'listed(R1, n)', 'passed_proposal(x, R1, <1>.n)'], ['granted(x, R1, n)'])],
     comment='FDAO:2, a grant to a passed proposal of the steward\'s own.')
 C.append(c)
 
@@ -160,29 +160,29 @@ C.append(c)
 c = Contract('STAY', 'Grassroots Stays', 'stay', ['GB'],
     'GB, Grassroots Bonds, Currencies\' (programs/currencies/bonds).  Through it it extends GKK; it cites their clauses whole and restates none.',
     'Alice and Bob are persons.  STAY extends GB.',
-    [('■', 'Hosting', 'Alice may list a place, one of a kind, as their own.'),
-     ('■', 'Booking', 'Bob, who knows Alice, and Alice may jointly decide that Bob stays at Alice\'s place on a night later than Alice\'s date, Bob paying in Alice-coins; a place is booked at most once a night.'),
-     ('■', 'Cancelling', 'Before the night, Alice may cancel a stay, paying Bob back.'),
-     ('◆', 'Reviewing', 'After the night, Bob may review their stay, once; Alice keeps the review.')],
+    [('◆', 'Hosting', 'Alice, who can host guests at a place, may list it under a name not among their places.'),
+     ('■', 'Booking', 'Bob, who knows Alice, and Alice may jointly decide that Bob stays at a place of Alice\'s on a night later than Alice\'s date, for a price Bob pays in Alice-coins; a place is booked at most once a night.'),
+     ('■', 'Cancelling', 'Before the night, by Alice\'s date, Alice may cancel a stay, paying Bob back its whole price in Alice-coins; Bob is not asked.'),
+     ('■', 'Reviewing', 'Once the night has come, by Bob\'s date, Bob may review their stay, once; Alice keeps the review and is not asked.')],
     ['Places: the places Alice hosts.', 'Stays: the stays Alice has.', 'Guests: the guests Alice hosts.', 'Reviews: the reviews Alice received.',
      'Hosting: Alice [List place] <place>',
      'Booking: Bob [Book] <place> <night> <amount>', '  Alice: Bob asks to stay at your place.',
-     'Cancelling: Alice [Cancel] <amount>',
+     'Cancelling: Alice [Cancel]',
      'Reviewing: Bob [Review] <review>'],
-    'place, stay, guest, review; a night is a day of GB\'s calendar.')
+    'place; stay, stay(x, a, d) at the guest; guest, guest(b, x, d, k) at the host, k the price; review; a night is a day of GB\'s calendar.')
 c.schema('list_place', ['Alice'], ['s:x'],
     [('guarded', ['place(x)'], [], [ID], ['place(x)'])], comment='STAY:1, Hosting.')
 c.schema('book', ['Bob', 'Alice'], ['s:x', 'n:d', 'n:k', 'n:t'],
     [('guarded', ['stay(x, R2, d)'], ['k*coin(R2)'], [ID, 'knows(R2)'], []),
-     ('guarded', ['booked(x, d)', 'guest(R1, x, d)', 'k*paid(x, d)'], [], [ID, 'place(x)', 'date(t)'], ['booked(x, d)'])],
+     ('guarded', ['booked(x, d)', 'guest(R1, x, d, k)'], [], [ID, 'place(x)', 'date(t)'], ['booked(x, d)'])],
     constraint='gt(num(d), num(t))', comment='STAY:2, Booking: Bob pays k Alice-coins for the night d, later than Alice\'s date t.')
 c.schema('cancel', ['Alice', 'Bob'], ['s:x', 'n:d', 'n:k', 'n:t'],
-    [('guarded', [], ['booked(x, d)', 'guest(R2, x, d)', 'k*paid(x, d)'], [ID, 'date(t)'], []),
+    [('guarded', [], ['booked(x, d)', 'guest(R2, x, d, k)'], [ID, 'date(t)'], []),
      ('unguarded', ['k*coin(R1)'], ['stay(x, R1, d)'], [ID], [])],
-    constraint='gt(num(d), num(t))', comment='STAY:3, Cancelling, before the night: Bob is paid back in Alice-coins.')
+    constraint='gt(num(d), num(t))', comment='STAY:3, Cancelling, before the night: Bob is paid back the price k, in Alice-coins.')
 c.schema('review', ['Bob', 'Alice'], ['s:x', 'n:d', 's:r', 'n:t'],
-    [('guarded', ['reviewed(x, d)'], [], [ID, 'stay(x, R2, d)', 'date(t)'], ['reviewed(x, d)']),
-     ('unguarded', ['review(x, R1, r)'], [], [ID, 'guest(R1, x, d)'], [])],
+    [('guarded', ['reviewed(x, R2, d)'], [], [ID, 'stay(x, R2, d)', 'date(t)'], ['reviewed(x, R2, d)']),
+     ('unguarded', ['review(x, R1, r)'], [], [ID], [])],
     constraint='le(num(d), num(t))', comment='STAY:4, Reviewing, after the night, once.')
 C.append(c)
 
@@ -190,9 +190,9 @@ C.append(c)
 c = Contract('LIB', 'Grassroots Library', 'lib', ['GB'],
     'GB, Grassroots Bonds, Currencies\' (programs/currencies/bonds), for its calendar.  Through it it extends GKK; it cites their clauses whole and restates none.',
     'Alice and Bob are persons.  LIB extends GB.',
-    [('■', 'Shelving', 'Alice may put a thing of their own on their shelf, one of a kind.'),
-     ('■', 'Lending', 'Alice and Bob, who know each other, may jointly decide that Alice lends Bob a thing from their shelf until a day later than Alice\'s date; Bob holds it but cannot lend it on.'),
-     ('■', 'Returning', 'Bob may return a borrowed thing to Alice at any time; it goes back on Alice\'s shelf.'),
+    [('◆', 'Shelving', 'Alice may put a thing of their own on their shelf, under a name they have not used before.'),
+     ('■', 'Lending', 'Alice and Bob, who know each other, may jointly decide that Alice lends Bob a thing from Alice\'s shelf until a day later than Alice\'s date; it leaves the shelf, and Bob holds it but cannot lend it on.'),
+     ('■', 'Returning', 'Bob may return a borrowed thing at any time; Alice is not asked, and it goes back on Alice\'s shelf.'),
      ('○', 'On time', 'Bob returns a borrowed thing by the agreed day.')],
     ['Shelf: the things Alice has.', 'Lent: the things lent out by Alice.', 'Borrowed: what Alice borrowed.',
      'Shelving: Alice [Shelve] <thing>',
@@ -215,29 +215,35 @@ C.append(c)
 c = Contract('LDAO', 'Liquid DAO', 'ldao', ['DAO'],
     'DAO, Grassroots DAO (programs/dao), and through it GKK.  It cites their clauses whole and restates none.',
     'Alice and Bob are persons.  LDAO extends DAO.',
-    [('■', 'Delegating', 'A member of a DAO may make another member, whom they know, their delegate, one at a time; the steward records it.'),
+    [('■', 'Delegating', 'A member of a DAO, the steward included, may make another member, whom they know, their delegate in it, one at a time; the steward records the delegation.'),
      ('■', 'Revoking', 'A member may revoke their delegation at any time; the steward erases it.'),
-     ('○', 'Counting', 'The steward counts the vote of a member who did not vote on a proposal as their delegate\'s vote, and so on along the chain of delegates.')],
+     ('○', 'Counting', 'In deciding a proposal, the steward counts a member who did not vote on it as voting as their delegate did, or, if the delegate did not vote either, as the delegate\'s delegate did, and so on; a member whose chain of delegates ends with no vote, or comes back to them, is not counted as voting.')],
     ['Delegate: my delegate in each DAO.', 'Delegations: the delegations Alice records.',
-     'Delegating: Bob [Delegate] <delegate>',
-     'Revoking: Bob [Revoke] <delegate>'],
-    'delegate, delegation; my_delegate(c, n) at the member, delegation(m, c, n) at the steward.')
+     'Delegating: Bob [Delegate] <delegate>', '  Alice [Delegate own] <delegate>',
+     'Revoking: Bob [Revoke] <delegate>', '  Alice [Revoke own] <delegate>'],
+    'delegate, delegation; my_delegate(c, <a>.n) at the member, a the steward, delegation(m, c, n) at the steward.')
 c.schema('delegate', ['Bob', 'Alice'], ['p:c', 's:n'],
-    [('guarded', ['my_delegate(c, n)', 'delegating(n)'], [], [ID, 'member(<2>.n)', 'knows(c)'], ['delegating(n)']),
+    [('guarded', ['my_delegate(c, <2>.n)', 'delegating(<2>.n)'], [], [ID, 'member(<2>.n)', 'knows(c)'], ['delegating(<2>.n)']),
      ('unguarded', ['delegation(R1, c, n)'], [], [ID, 'member(<2>.n)', 'listed(R2, n)', 'listed(R1, n)', 'listed(c, n)'], [])],
     comment='LDAO:1, Delegating: Bob makes c, a member Bob knows, their delegate.')
 c.schema('revoke', ['Bob', 'Alice'], ['p:c', 's:n'],
-    [('guarded', [], ['my_delegate(c, n)', 'delegating(n)'], [ID, 'member(<2>.n)'], []),
+    [('guarded', [], ['my_delegate(c, <2>.n)', 'delegating(<2>.n)'], [ID, 'member(<2>.n)'], []),
      ('unguarded', [], ['delegation(R1, c, n)'], [ID, 'member(<2>.n)'], [])],
     comment='LDAO:2, Revoking.')
+c.schema('delegate_own', ['Alice'], ['p:c', 's:n'],
+    [('guarded', ['my_delegate(c, <1>.n)', 'delegating(<1>.n)', 'delegation(R1, c, n)'], [], [ID, 'member(<1>.n)', 'listed(R1, n)', 'listed(c, n)', 'knows(c)'], ['delegating(<1>.n)'])],
+    comment='LDAO:1, the steward delegates.')
+c.schema('revoke_own', ['Alice'], ['p:c', 's:n'],
+    [('guarded', [], ['my_delegate(c, <1>.n)', 'delegating(<1>.n)', 'delegation(R1, c, n)'], [ID, 'member(<1>.n)'], [])],
+    comment='LDAO:2, the steward revokes.')
 C.append(c)
 
 # ---------------------------------------------------------------- Joint accounts
 c = Contract('JOINT', 'Joint Accounts', 'joint', ['GC'],
     'GC, Grassroots Coins, Currencies\' (programs/currencies/coins), and through it GKK.  It cites their clauses whole and restates none.',
     'Alice and Bob are persons.  JOINT extends GC.',
-    [('■', 'Opening', 'Alice and Bob, who know each other, may jointly open a joint account.'),
-     ('■', 'Depositing', 'Either of them may move coins they hold into their joint account.'),
+    [('■', 'Opening', 'Alice and Bob, who know each other, may jointly open a joint account, under a name of Alice\'s not already used for one.'),
+     ('■', 'Depositing', 'Either of them may move coins they hold into their joint account; the other is not asked.'),
      ('■', 'Withdrawing', 'Coins leave a joint account only by an act of both, to either of them.')],
     ['Joint: the joint money Alice shares.', 'Accounts: the accounts Alice shares.',
      'Opening: Alice [Open account] <name>', '  Bob: Alice asks to open a joint account with you.',
@@ -270,16 +276,16 @@ C.append(c)
 c = Contract('REC', 'Recommendations', 'rec', ['GKK'],
     'GKK, Grassroots Keys and Knowledge, GSC\'s (programs/gsc).  It cites GKK:1 to GKK:3 whole and restates none.',
     'Alice, Bob and Carol are persons.  REC extends GKK.',
-    [('◆', 'Recommending', 'Alice may recommend Bob, whom they know, for something, a skill or a service; Bob keeps the recommendation.'),
-     ('■', 'Showing', 'Bob may show a recommendation they hold to Carol, whom they know; Carol then sees who recommended Bob, and for what.'),
-     ('■', 'Withdrawing', 'Alice may withdraw a recommendation; it is gone from Bob and from everyone Bob showed it to.')],
+    [('◆', 'Recommending', 'Alice may recommend Bob, whom they know, for something, a skill or a service, once for each thing; Bob is not asked and keeps the recommendation.'),
+     ('■', 'Showing', 'Bob may show a recommendation they hold to Carol, whom they know, once; Carol then sees who recommended Bob and for what, but does not thereby come to know the recommender.'),
+     ('■', 'Withdrawing', 'Alice may withdraw a recommendation; it is gone from Bob and from everyone Bob showed it to, and Alice may not make it again.')],
     ['Given: the recommended people Alice vouches for.', 'Received: the endorsements Alice holds.', 'Seen: the vouched ones Alice saw.',
      'Recommending: Alice [Recommend] <for what>',
      'Showing: Bob [Show] <recommendation>',
      'Withdrawing: Alice [Withdraw recommendation]'],
     'recommendation: recommended(b, s) at the recommender, endorsement(a, s) at the recommended, shown(c, a, s) at them for each person shown, vouched(b, a, s) at that person.')
 c.schema('recommend', ['Alice', 'Bob'], ['s:s'],
-    [('guarded', ['recommended(R2, s)'], [], [ID, 'knows(R2)'], ['recommended(R2, s)']),
+    [('guarded', ['recommended(R2, s)'], [], [ID, 'knows(R2)'], ['recommended(R2, s)', 'withdrew(R2, s)']),
      ('unguarded', ['endorsement(R1, s)'], [], [ID], [])],
     comment='REC:1, Recommending: Alice recommends Bob for s.')
 c.schema('show', ['Bob', 'Carol'], ['p:a', 's:s'],
@@ -288,9 +294,9 @@ c.schema('show', ['Bob', 'Carol'], ['p:a', 's:s'],
     comment='REC:2, Showing: Bob shows Carol that a recommends Bob for s.')
 c.schema('withdraw_recommendation', ['Bob', 'Alice', 'Bob'], ['s:s'],
     [('unguarded', [], ['endorsement(R2, s)'], [ID], []),
-     ('guarded', [], ['recommended(R1, s)'], [ID], []),
+     ('guarded', ['withdrew(R1, s)'], ['recommended(R1, s)'], [ID], []),
      ('unguarded', [], ['vouched(R1, R2, s)'], [ID], [], (1, 'shown', ['R2', 's']))],
-    comment='REC:3, Withdrawing: from Bob and from every person Bob showed it to.', listed=True)
+    comment='REC:3, Withdrawing: from Bob and from every person Bob showed it to; withdrew(b, s) keeps Alice from making it again.', listed=True)
 C.append(c)
 
 for c in C:

@@ -5,9 +5,9 @@
 % Schemas: FDAO.glp beside this file, written by tools/contracts.py.
 FDAO: Funded DAO
 Alice and Bob are persons.  FDAO extends DAO and GB.
-1. ■ Funding.  A member of a DAO may give coins they hold to it; its steward keeps them apart, as the DAO's.
-2. ■ Granting.  The steward may pay coins of the DAO to the proposer of a passed proposal, once per proposal.
-3. ○ Purpose.  The steward pays out the DAO's coins only as grants to passed proposals.
+1. ■ Funding.  A member of a DAO may give it coins they hold; its steward, who is not asked, keeps them apart as the DAO's, and they leave the DAO only as grants.
+2. ■ Granting.  The steward may pay the proposer of a passed proposal, once per proposal, any amount of the DAO's coins of one issuer; the proposer is not asked.
+3. ○ Amount.  The steward grants a passed proposal the amount it asks for, as far as the DAO's coins allow.
 Pragmas
 Treasury: the dao coins Alice keeps.
 Grants: the granted ones Alice paid.

@@ -126,8 +126,20 @@ for c in contracts:
         for a in ancestors(c['id']):
             if any(x['name'] == s['name'] for x in byid[a]['schemas']): s['from'] = a
 
-data = {'contracts': contracts, 'glpCommit': glp_commit,
-        'pdf': 'the contracts as Udi revised them on 2026-10-30 (Coordination #11)'}
+# The site shows only contracts with an app.  A contract that builds on a dropped one is shown building on
+# the nearest shown ones it extends, through the dropped one, less any that another of them already extends.
+shown = {c['id'] for c in contracts if c['live']}
+def nearest(cid):
+    out = []
+    for p in EXTENDS[cid]:
+        out += [p] if p in shown else nearest(p)
+    return list(dict.fromkeys(out))
+def above(cid): return set(ancestors(cid))
+for c in contracts:
+    ps = nearest(c['id'])
+    c['extends'] = [p for p in ps if not any(p in above(q) for q in ps if q != p)]
+contracts = [c for c in contracts if c['id'] in shown]
+data = {'contracts': contracts, 'glpCommit': glp_commit}
 open(f'{SITE}/data.js', 'w').write('window.DATA = ' + json.dumps(data, ensure_ascii=False) + ';\n')
 for c in contracts:
     print(c['id'], len(c['schemas']), 'live' if c['live'] else '', list(c['layers']))

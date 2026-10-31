@@ -45,6 +45,28 @@ main{max-width:1120px;margin:0 auto;padding:28px 24px 80px}
 .edge.dim{opacity:.1}
 #tip{position:absolute;pointer-events:none;background:rgba(29,29,31,.92);color:#fff;border-radius:12px;padding:9px 12px;font-size:13px;max-width:260px;opacity:0;transition:opacity .12s;z-index:3;backdrop-filter:blur(8px)}
 #tip b{display:block;font-size:14px;margin-bottom:2px}
+.grp{margin-top:12px}
+.tog{display:flex;align-items:center;gap:14px;width:100%;border:none;text-align:left;cursor:pointer;padding:14px 18px;background:var(--card);border-radius:20px;box-shadow:var(--shadow);transition:box-shadow .15s}
+.tog:hover{box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 26px rgba(0,0,0,.08)}
+.tog h2{font-size:19px;letter-spacing:-.01em;margin:0;font-weight:700;flex:none}
+.tog .minis{display:flex;gap:6px;flex:1;min-width:0;overflow:hidden;justify-content:flex-end}
+.tog .mini{flex:none;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.tog .cnt{color:var(--mute);font-size:14px;flex:none}
+.tog .chev{flex:none;color:var(--faint);font-size:20px;line-height:1;transition:transform .2s}
+.grp.open .tog{border-radius:20px 20px 0 0;box-shadow:none;border-bottom:1px solid var(--line)}
+.grp.open .tog .chev{transform:rotate(90deg)}
+.grp.open .tog .minis{visibility:hidden}
+.grp .shelf{display:none;border-radius:0 0 20px 20px}
+.grp.open .shelf{display:grid}
+.grp.open{border-radius:20px;box-shadow:var(--shadow)}
+.grp.open .tog,.grp.open .shelf{box-shadow:none}
+.hoodbar{display:flex;align-items:center;gap:12px;width:100%;border:none;text-align:left;cursor:pointer;margin-top:16px;padding:16px 20px;background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
+.hoodbar:hover{box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 26px rgba(0,0,0,.08)}
+.hoodbar .hi{flex:none;width:38px;height:38px;border-radius:11px;background:#1d1d1f;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.hoodbar b{display:block;font-size:16px}
+.hoodbar small{color:var(--mute);font-size:13.5px}
+.hoodbar .chev{margin-left:auto;color:var(--faint);font-size:20px;transition:transform .2s}
+.hoodbar.on .chev{transform:rotate(90deg)}
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:0 28px;padding:6px 20px}
 .app{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .app:last-child,.app.lastrow{border-bottom:none}
@@ -126,7 +148,16 @@ table.roles td.r{font-family:var(--mono);white-space:nowrap}
 #pop p{margin:7px 0;font-size:15px;color:#3a3a3c}
 #pop code{font-size:12.5px;background:var(--bg);padding:1px 5px;border-radius:5px}
 #pop .x{float:right;border:none;background:rgba(118,118,128,.12);width:26px;height:26px;border-radius:50%;cursor:pointer;color:var(--mute)}
-@media (max-width:640px){.shelf{grid-template-columns:1fr;padding:6px 16px}.prod .icon{width:96px;height:96px;font-size:48px;border-radius:22px}}
+@media (max-width:640px){.shelf{grid-template-columns:1fr;padding:6px 16px}.prod .icon{width:96px;height:96px;font-size:48px;border-radius:22px}
+  .tog{padding:14px 16px}.tog .minis{display:none}.tog .cnt{margin-left:auto}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);row-gap:12px}.stat{min-width:0}.stat:nth-child(3){border-right:none}
+  .sh{flex-wrap:wrap;gap:2px 12px}
+  table.roles,table.roles tbody,table.roles tr,table.roles td{display:block;width:100%}
+  table.roles tr:first-child{display:none}
+  table.roles tr{border-top:1px solid var(--line);padding:8px 14px}
+  table.roles td{border:none;padding:3px 0}
+  table.roles td[data-k]:not(:empty)::before{content:attr(data-k);display:block;font-weight:600;color:var(--faint);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+  table.roles td[data-k]:empty{display:none}}
 </style>
 </head>
 <body>
@@ -140,9 +171,9 @@ table.roles td.r{font-family:var(--mono);white-space:nowrap}
       <h1>Social contracts that run.</h1>
       <p>Each contract is a few plain rules about what people may do with each other. A chain of programs turns it into an app that runs on people's own devices, with no central server.</p>
     </div>
+    <div id="shelves"></div>
     <div class="sh"><h2>How they fit together</h2><span>arrows point to what a contract builds on</span></div>
     <div class="card" id="mapcard"><svg id="graph"></svg><div id="tip"></div></div>
-    <div id="shelves"></div>
   </section>
   <section id="view"></section>
 </main>
@@ -185,13 +216,13 @@ const Q = k => `<button class="q" data-help="${k}" title="What is this?">?</butt
 document.addEventListener('click', e => { const b = e.target.closest('[data-help]'); if (b){ e.stopPropagation(); help(b.dataset.help); } }, true);
 
 /* ---------- map ---------- */
-const POS = {GKK:[560,0], DAO:[140,1], REC:[340,1], GSG:[570,1], GC:[910,1],
-  LDAO:[60,2], GSN:[330,2], GnW:[470,2], GFF:[610,2], LBM:[750,2], GB:[910,2], JOINT:[1050,2],
-  FDAO:[170,3], CSSN:[380,3], GAI:[540,3], AGORA:[780,3], STAY:[920,3], LIB:[1060,3], GSNP:[460,4]};
+const POS = {GKK:[560,0], DAO:[150,1], REC:[350,1], GSG:[560,1], GC:[910,1],
+  LDAO:[60,2], GSN:[380,2], GAI:[540,2], GFF:[700,2], GB:[880,2], JOINT:[1050,2],
+  FDAO:[190,3], CSSN:[330,3], GSNP:[470,3], AGORA:[740,3], STAY:[900,3], LIB:[1060,3]};
 function drawGraph(){
   const W = 1120, rowH = 90, nw = 104, nh = 42, top = 36;
   const xy = id => ({x: POS[id][0], y: top + POS[id][1]*rowH});
-  const H = top + 4*rowH + 36;
+  const H = top + 3*rowH + 36;
   let s = '<defs>' + Object.entries(FAM).map(([k, v]) => `<linearGradient id="g-${k}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="${v[0]}"/><stop offset="1" stop-color="${v[1]}"/></linearGradient>`).join('') +
     `<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c7c7cc"/></marker></defs>`;
   D.contracts.forEach(c => c.extends.forEach(p => { const a = xy(c.id), b = xy(p), y1 = a.y - nh/2, y2 = b.y + nh/2 + 4, my = (y1 + y2) / 2;
@@ -211,17 +242,27 @@ function drawGraph(){
     n.onmouseleave = () => tip.style.opacity = 0;
   });
 }
+const GROUPS = [['Identity & social', ['identity', 'social']], ['Children & AI agents', ['care']], ['Money & trade', ['money']], ['Deciding together', ['governance']], ['Sharing', ['sharing', 'mobility']]];
+const OPEN = new Set();
 function drawShelves(){
-  const groups = [['Identity & social', ['identity', 'social']], ['Care: guardians, children, AI agents', ['care']], ['Money & trade', ['money']], ['Deciding together', ['governance']], ['Sharing & getting around', ['sharing', 'mobility']]];
-  $('#shelves').innerHTML = groups.map(([title, fams]) => {
+  $('#shelves').innerHTML = `<div class="sh"><h2>Contracts</h2><span>${D.contracts.length} contracts, each with a live app</span></div>` + GROUPS.map(([title, fams], i) => {
     const cs = D.contracts.filter(c => fams.includes(c.family));
-    return `<div class="sh"><h2>${title}</h2><span>${cs.length} contract${cs.length > 1 ? 's' : ''}</span></div>
+    return `<div class="grp${OPEN.has(i) ? ' open' : ''}" data-g="${i}"><button class="tog" aria-expanded="${OPEN.has(i)}"><h2>${title}</h2>
+        <span class="minis">${cs.map(c => `<span class="mini" style="background:${grad(c)}">${c.icon}</span>`).join('')}</span>
+        <span class="cnt">${cs.length}</span><span class="chev">›</span></button>
       <div class="card shelf">${cs.map(c => `<div class="app" data-id="${c.id}">${icon(c)}
-        <div class="t"><div class="nm">${esc(c.title)}</div><div class="ab">${esc(c.about)}</div></div>${openBtn(c)}</div>`).join('')}</div>`;
+        <div class="t"><div class="nm">${esc(c.title)}</div><div class="ab">${esc(c.about)}</div></div>${openBtn(c)}</div>`).join('')}</div></div>`;
   }).join('');
-  document.querySelectorAll('.shelf').forEach(sh => { const a = [...sh.children], cols = getComputedStyle(sh).gridTemplateColumns.split(' ').length;
-    a.slice(a.length - (a.length % cols || cols)).forEach(x => x.classList.add('lastrow')); });
+  document.querySelectorAll('.grp').forEach(g => g.querySelector('.tog').onclick = () => {
+    const i = +g.dataset.g; OPEN.has(i) ? OPEN.delete(i) : OPEN.add(i);
+    g.classList.toggle('open', OPEN.has(i)); g.querySelector('.tog').setAttribute('aria-expanded', OPEN.has(i)); lastRows(); });
+  lastRows();
   document.querySelectorAll('.app').forEach(a => a.onclick = e => { if (!e.target.closest('[data-stop]')) go(a.dataset.id); });
+  doSearch();
+}
+function lastRows(){
+  document.querySelectorAll('.grp.open .shelf').forEach(sh => { const a = [...sh.children], cols = getComputedStyle(sh).gridTemplateColumns.split(' ').length;
+    a.forEach(x => x.classList.remove('lastrow')); a.slice(a.length - (a.length % cols || cols)).forEach(x => x.classList.add('lastrow')); });
 }
 
 /* ---------- search ---------- */
@@ -231,6 +272,9 @@ function doSearch(){
   document.querySelectorAll('.node').forEach(n => { const h = hit(C[n.dataset.id]); n.classList.toggle('dim', !h); n.classList.toggle('hit', !!q && h); });
   document.querySelectorAll('.edge').forEach(e => e.classList.toggle('dim', !!q));
   document.querySelectorAll('.app').forEach(a => a.classList.toggle('dim', !hit(C[a.dataset.id])));
+  document.querySelectorAll('.grp').forEach(g => { const any = [...g.querySelectorAll('.app')].some(a => !a.classList.contains('dim'));
+    g.style.display = q && !any ? 'none' : ''; g.classList.toggle('open', q ? any : OPEN.has(+g.dataset.g)); });
+  lastRows();
 }
 $('#q').addEventListener('input', () => { if (C[location.hash.slice(1).split('-')[0]]) go(null); doSearch(); });
 $('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ const a = document.querySelector('.app:not(.dim)'); if (a) go(a.dataset.id); } });
@@ -243,14 +287,17 @@ document.addEventListener('keydown', e => {
   if ($('#pop').style.display === 'flex'){ $('#pop').style.display = 'none'; return; }
   if (document.activeElement.tagName !== 'INPUT') go(null);
 });
+let LAST = null;
 window.addEventListener('hashchange', route);
 function route(){
   const [id, part] = location.hash.slice(1).split('-');
-  if (!C[id]){ $('#view').style.display = 'none'; $('#top').style.display = ''; return; }
+  if (!C[id]){ LAST = null; $('#view').style.display = 'none'; $('#top').style.display = ''; lastRows(); return; }
   $('#top').style.display = 'none';
   const v = $('#view'); v.style.display = 'block'; v.classList.remove('zoomin'); void v.offsetWidth; v.classList.add('zoomin');
+  const y = window.scrollY;
   page(C[id], part === 'hood');
-  if (part !== 'hood') window.scrollTo(0, 0);
+  if (id !== LAST) window.scrollTo(0, 0); else if (part !== 'hood') window.scrollTo(0, y);
+  LAST = id;
 }
 
 /* ---------- a contract ---------- */
@@ -262,8 +309,7 @@ function page(c, hood){
     <span class="crumbs" data-go="">‹ All contracts</span>
     <div class="prod">${icon(c)}
       <div><h1>${esc(c.title)}</h1><div class="sub">${esc(c.about)}</div>
-      <div class="acts">${c.live ? `<a class="btn blue" href="${appUrl(c)}" target="_blank" rel="noopener">Open app</a>` : `<button class="btn" disabled>App coming soon</button>`}
-        <button class="btn grey" id="hoodbtn" ${c.cascade ? '' : 'disabled'}>${hood ? 'Close the hood' : 'Under the hood'}</button></div></div></div>
+      <div class="acts"><a class="btn blue" href="${appUrl(c)}" target="_blank" rel="noopener">Open app</a></div></div></div>
     <div class="stats">
       <div class="stat"><div class="k">Rules</div><div class="v">${c.clauses.length}</div><div class="s">in English</div></div>
       <div class="stat"><div class="k">Speech acts</div><div class="v">${c.schemas.length ? own : '–'}</div><div class="s">${c.schemas.length ? 'of its own' : 'not compiled'}</div></div>
@@ -277,12 +323,13 @@ function page(c, hood){
       <div class="pre">${esc(c.preamble)}</div>
       <ol class="cl">${c.clauses.map(cl => `<li><span class="n">${cl.n}</span><span title="${({'■':'enforced','◆':'attested','○':'undertaken'})[cl.mod]}">${cl.mod}</span><span><b>${esc(cl.name)}.</b> ${esc(cl.text)}</span></li>`).join('')}</ol>
       </div>
-      <p class="small">${c.source === 'pdf' ? `Text: ${esc(D.pdf)}.` : 'An experimental contract, not one of the project\'s papers.'}${!c.cascade ? ' Not compiled yet, so there is no app and nothing under the hood.' : ''}</p>
+      ${c.source === 'pdf' ? '' : '<p class="small">An experimental contract, not one of the project\'s papers.</p>'}
+      <button class="hoodbar${hood ? ' on' : ''}" id="hoodbtn"><span class="hi">⚙︎</span><span><b>Under the hood</b><small>From the English text to the code the app runs, layer by layer</small></span><span class="chev">›</span></button>
     </div>
     <div id="hood" class="sec"></div>`;
   $('#view').querySelectorAll('[data-go]').forEach(a => a.onclick = () => go(a.dataset.go || null));
   $('#hoodbtn').onclick = () => go(c.id, !hood);
-  if (hood && c.cascade){ $('#hood').style.display = 'block'; hoodHtml(c); setTimeout(() => $('#hood').scrollIntoView({behavior:'smooth', block:'start'}), 60); }
+  if (hood){ $('#hood').style.display = 'block'; hoodHtml(c); setTimeout(() => $('#hood').scrollIntoView({behavior:'smooth', block:'start'}), 60); }
 }
 
 function hoodHtml(c){
@@ -324,7 +371,7 @@ function schemaHtml(s, open){
   return `<details class="schema" ${open ? 'open' : ''}><summary><span>${esc(s.head)}</span><span class="fr">${s.from}</span></summary>
     <div class="say">${esc(say)}</div>
     <table class="roles"><tr><th>At</th><th>Needs · must not have</th><th>Gets</th><th>Loses</th></tr>
-    ${s.roles.map(r => `<tr><td class="r">${esc(r.role)}</td><td>${at(r.need,'need')}${at(r.not,'not')}</td><td>${at(r.add,'add')}</td><td>${at(r.del,'del')}</td></tr>`).join('')}</table></details>`;
+    ${s.roles.map(r => `<tr><td class="r">${esc(r.role)}</td><td data-k="Needs · must not have">${at(r.need,'need')}${at(r.not,'not')}</td><td data-k="Gets">${at(r.add,'add')}</td><td data-k="Loses">${at(r.del,'del')}</td></tr>`).join('')}</table></details>`;
 }
 
 drawGraph(); drawShelves(); route();

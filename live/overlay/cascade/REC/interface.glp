@@ -10,7 +10,7 @@ interface([
   type('Class', [establish('Peer'), acquaint('Peer', 'Peer'), introduce('Peer', 'Peer', 'Peer'), recommend('Peer', 'Peer', 'Speech'), show('Peer', 'Peer', 'Peer', 'Speech'), withdraw_recommendation('Peer', 'Peer', 'List'('Peer'), 'Speech')]),
   type('Proposal', [establish('Peer'), acquaint('Peer', 'Peer'), introduce('Peer', 'Peer', 'Peer'), recommend('Peer', 'Peer', 'Speech'), show('Peer', 'Peer', 'Peer', 'Speech'), withdraw_recommendation('Peer', 'Peer', 'Speech')]),
   type('Request', [propose('Proposal')]),
-  type('Atom', [identity, knows('Peer'), recommended('Peer', 'Speech'), endorsement('Peer', 'Speech'), shown('Peer', 'Peer', 'Speech'), vouched('Peer', 'Peer', 'Speech')]),
+  type('Atom', [identity, knows('Peer'), recommended('Peer', 'Speech'), withdrew('Peer', 'Speech'), endorsement('Peer', 'Speech'), shown('Peer', 'Peer', 'Speech'), vouched('Peer', 'Peer', 'Speech')]),
   type('Peer', ['Key']),
   type('Speech', [speech('Utterance', 'Peer')]),
   type('Utterance', [utterance('String'), 'Speech']),

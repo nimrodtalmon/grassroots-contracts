@@ -37,6 +37,8 @@ knows(Peer)
 ;
 recommended(Peer, Speech)
 ;
+withdrew(Peer, Speech)
+;
 endorsement(Peer, Speech)
 ;
 shown(Peer, Peer, Speech)

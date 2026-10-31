@@ -1,7 +1,7 @@
 # Grassroots Contracts
 
 The grassroots social contracts of Ehud Shapiro's GLP project, as a browsable site: a graph of the
-contracts, each contract's text, the cascade from English to running code ("under the hood"), and a
+contracts that have a live app (GnW and LBM, which have none, are left out), each contract's text, the cascade from English to running code ("under the hood"), and a
 live app for every compiled contract: four people, each with an agent running the compiled platform.
 
 - **Site** (static): `index.html`, `data.js`, `stack/` (the cascade's layers, loaded on demand).

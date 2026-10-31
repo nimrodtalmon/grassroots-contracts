@@ -125,11 +125,9 @@ stay(Speech, Peer, Integer)
 ;
 booked(Speech, Integer)
 ;
-guest(Peer, Speech, Integer)
+guest(Peer, Speech, Integer, Integer)
 ;
-paid(Speech, Integer)
-;
-reviewed(Speech, Integer)
+reviewed(Speech, Peer, Integer)
 ;
 review(Speech, Peer, Speech)
 .

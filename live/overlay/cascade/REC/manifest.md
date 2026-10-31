@@ -3,7 +3,7 @@
 - Contract: `REC` (`rec` to the checker), its owner's two files `programs/rec/REC.txt` and `programs/rec/REC.glp`, copied here as they stood at `fa053838`.
 - The paper: ` (not on this machine)` at `unknown`, for the paper's own record.
 - The tools: this repository at `fa053838` --- programs/gsc (the printer of the schemas' notation, notation_contract/1, the checker, check/2, and the compiler to VMAT, compile_contract/2), programs/vglp/cva/compiler (the compiler to the canonical CVA platform, compile/5, and its reader of the pragmas, pragmas.sh), glp_runtime's :emit (the canonical compilation to GLP).
-- Run on 2026-10-31 15:14 UTC by `cascade.sh rec`; the suite's Section CAS re-runs it and holds these files to what the tools print.
+- Run on 2026-10-31 18:42 UTC by `cascade.sh rec`; the suite's Section CAS re-runs it and holds these files to what the tools print.
 
 | Artefact | What it holds |
 |---|---|

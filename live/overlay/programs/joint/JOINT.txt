@@ -5,8 +5,8 @@
 % Schemas: JOINT.glp beside this file, written by tools/contracts.py.
 JOINT: Joint Accounts
 Alice and Bob are persons.  JOINT extends GC.
-1. ■ Opening.  Alice and Bob, who know each other, may jointly open a joint account.
-2. ■ Depositing.  Either of them may move coins they hold into their joint account.
+1. ■ Opening.  Alice and Bob, who know each other, may jointly open a joint account, under a name of Alice's not already used for one.
+2. ■ Depositing.  Either of them may move coins they hold into their joint account; the other is not asked.
 3. ■ Withdrawing.  Coins leave a joint account only by an act of both, to either of them.
 Pragmas
 Joint: the joint money Alice shares.

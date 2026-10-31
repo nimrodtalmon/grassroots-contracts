@@ -88,12 +88,12 @@ list_place(Alice?; x) :
 
 book(Bob?, Alice?; x, d, k, t) | d > t :
     at Bob: identity, knows(Alice), +stay(x, Alice, d), -k.coin(Alice)
-    at Alice: identity, place(x), date(t), not booked(x, d), +booked(x, d), +guest(Bob, x, d), +k.paid(x, d)
+    at Alice: identity, place(x), date(t), not booked(x, d), +booked(x, d), +guest(Bob, x, d, k)
 
 cancel(Alice?, Bob; x, d, k, t) | d > t :
-    at Alice: identity, date(t), -booked(x, d), -guest(Bob, x, d), -k.paid(x, d)
+    at Alice: identity, date(t), -booked(x, d), -guest(Bob, x, d, k)
     at Bob: identity, +k.coin(Alice), -stay(x, Alice, d)
 
 review(Bob?, Alice; x, d, r, t) | d <= t :
-    at Bob: identity, stay(x, Alice, d), date(t), not reviewed(x, d), +reviewed(x, d)
-    at Alice: identity, guest(Bob, x, d), +review(x, Bob, r)
+    at Bob: identity, stay(x, Alice, d), date(t), not reviewed(x, Alice, d), +reviewed(x, Alice, d)
+    at Alice: identity, +review(x, Bob, r)

@@ -163,25 +163,25 @@ member(CName)
 ;
 listed(Peer, Speech)
 ;
-proposal(Speech, Peer, Speech)
+proposal(Speech, Peer, CName)
 ;
-sent(Peer, Speech, Speech)
+sent(Peer, Speech, Peer, Speech)
 ;
-voted(Speech, Peer, Speech)
+voted(Speech, Peer, CName)
 ;
 yes_vote(Speech, Peer, Peer, Speech)
 ;
 counted(Speech, Peer, Peer, Speech)
 ;
-decided(Speech, Peer, Speech)
+decided(Speech, Peer, CName)
 ;
 no_vote(Speech, Peer, Peer, Speech)
 ;
-passed_proposal(Speech, Peer, Speech)
+passed_proposal(Speech, Peer, CName)
 ;
 told(Peer, Speech, Peer, Speech)
 ;
-rejected_proposal(Speech, Peer, Speech)
+rejected_proposal(Speech, Peer, CName)
 ;
 coin(Peer)
 ;

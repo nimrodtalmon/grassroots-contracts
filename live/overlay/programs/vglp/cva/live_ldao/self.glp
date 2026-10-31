@@ -41,6 +41,10 @@ deliver_reject(Peer, Peer, Speech, Peer, Speech)
 delegate(Peer, Peer, Peer, Speech)
 ;
 revoke(Peer, Peer, Peer, Speech)
+;
+delegate_own(Peer, Peer, Speech)
+;
+revoke_own(Peer, Peer, Speech)
 .
 Proposal ::=
 establish(Peer)
@@ -72,6 +76,10 @@ reject(Peer, Speech, Peer, Speech)
 delegate(Peer, Peer, Peer, Speech)
 ;
 revoke(Peer, Peer, Peer, Speech)
+;
+delegate_own(Peer, Peer, Speech)
+;
+revoke_own(Peer, Peer, Speech)
 .
 Request ::= propose(Proposal).
 Atom ::=
@@ -83,29 +91,29 @@ member(CName)
 ;
 listed(Peer, Speech)
 ;
-proposal(Speech, Peer, Speech)
+proposal(Speech, Peer, CName)
 ;
-sent(Peer, Speech, Speech)
+sent(Peer, Speech, Peer, Speech)
 ;
-voted(Speech, Peer, Speech)
+voted(Speech, Peer, CName)
 ;
 yes_vote(Speech, Peer, Peer, Speech)
 ;
 counted(Speech, Peer, Peer, Speech)
 ;
-decided(Speech, Peer, Speech)
+decided(Speech, Peer, CName)
 ;
 no_vote(Speech, Peer, Peer, Speech)
 ;
-passed_proposal(Speech, Peer, Speech)
+passed_proposal(Speech, Peer, CName)
 ;
 told(Peer, Speech, Peer, Speech)
 ;
-rejected_proposal(Speech, Peer, Speech)
+rejected_proposal(Speech, Peer, CName)
 ;
-my_delegate(Peer, Speech)
+my_delegate(Peer, CName)
 ;
-delegating(Speech)
+delegating(CName)
 ;
 delegation(Peer, Peer, Speech)
 .
