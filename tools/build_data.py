@@ -9,10 +9,10 @@ pdf_json, GLP, SITE = sys.argv[1:4]
 
 OWNER = {'GKK': 'GSC', 'GSG': 'GSC', 'GC': 'Currencies', 'GSN': 'GSC', 'GnW': 'GAI',
          'GFF': 'GFF', 'GB': 'Currencies', 'LBM': 'LBM', 'CSSN': 'CSSN', 'GAI': 'GAI',
-         'GSNP': 'GAI', 'AGORA': 'Nimrod'}
+         'GSNP': 'GAI', 'AGORA': 'Nimrod', 'DAO': 'Nimrod'}
 EXTENDS = {'GKK': [], 'GSG': ['GKK'], 'GC': ['GKK'], 'GSN': ['GSG'], 'GnW': ['GSG'],
            'GFF': ['GSG'], 'GB': ['GC'], 'LBM': ['GSG'], 'CSSN': ['GSN', 'GnW'],
-           'GAI': ['GnW'], 'GSNP': ['GSN', 'GAI'], 'AGORA': ['GB']}
+           'GAI': ['GnW'], 'GSNP': ['GSN', 'GAI'], 'AGORA': ['GB'], 'DAO': ['GKK']}
 # one plain line, an icon and a family per contract (the site's own words)
 ABOUT = {
     'GKK': ('🔑', 'identity', 'Who you are and who you know: a key of your own, meeting people, introducing them.'),
@@ -27,6 +27,7 @@ ABOUT = {
     'GFF': ('📰', 'social', 'Feeds and followers, delivered from friend to friend.'),
     'LBM': ('🚗', 'mobility', 'Ride sharing: tell a friend where you are and agree on a ride.'),
     'AGORA': ('🧺', 'money', 'Barter: make things, post them on a market wall, trade them.'),
+    'DAO': ('🗳️', 'governance', 'A DAO: members make proposals, vote for or against, and the steward decides.'),
 }
 LAYERS = [('schemas', 'schemas.txt'), ('verdict', 'verdict.txt'), ('vmat', 'vmat.tex'),
           ('platform', 'platform.vglp'), ('glp', 'platform.glp')]
@@ -80,13 +81,14 @@ glp_commit = subprocess.run(['git', '-C', GLP, 'log', '-1', '--format=%H %cs'],
 
 contracts = json.load(open(pdf_json))
 for c in contracts: c['source'] = 'pdf'
-lines = [l for l in open(f'{GLP}/programs/agora/AGORA.txt').read().split('\n') if l and not l.startswith('%')]
-cl = []
-for l in lines[2:lines.index('Pragmas')]:
-    m = re.match(r'(\d)\. (\S) (.+?)\.\s+(.*)$', l)
-    cl.append({'n': int(m.group(1)), 'mod': m.group(2), 'name': m.group(3), 'text': m.group(4)})
-contracts.append({'id': 'AGORA', 'title': 'Grassroots Barter', 'preamble': lines[1], 'clauses': cl,
-                  'noteBefore': '', 'source': 'agora'})
+for cid, d in [('AGORA', 'agora'), ('DAO', 'dao')]:
+    lines = [l for l in open(f'{GLP}/programs/{d}/{cid}.txt').read().split('\n') if l and not l.startswith('%')]
+    cl = []
+    for l in lines[2:lines.index('Pragmas')]:
+        m = re.match(r'(\d)\. (\S) (.+?)\.\s+(.*)$', l)
+        cl.append({'n': int(m.group(1)), 'mod': m.group(2), 'name': m.group(3), 'text': m.group(4)})
+    contracts.append({'id': cid, 'title': lines[0].split(': ', 1)[1], 'preamble': lines[1], 'clauses': cl,
+                      'noteBefore': '', 'source': 'experimental'})
 
 shutil.rmtree(f'{SITE}/stack', ignore_errors=True)
 live = {d[5:].upper() for d in os.listdir(f'{GLP}/programs/vglp/cva') if d.startswith('live_')}

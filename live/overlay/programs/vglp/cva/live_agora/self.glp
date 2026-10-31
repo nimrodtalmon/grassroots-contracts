@@ -66,6 +66,22 @@ deliver_want(Peer, Peer, Speech, Peer, Speech)
 ;
 deliver_want_known(Peer, Peer, Speech, Peer, Speech)
 ;
+offer_own(Peer, Peer, Speech, Speech)
+;
+want_own(Peer, Speech, Speech)
+;
+deliver_own_offer(Peer, Peer, Peer, Speech, Speech)
+;
+deliver_own_want(Peer, Peer, Speech, Speech)
+;
+deliver_own_offer_known(Peer, Peer, Peer, Speech, Speech)
+;
+deliver_own_want_known(Peer, Peer, Speech, Speech)
+;
+withdraw_own_offer(Peer, List(Peer), Peer, Speech, Speech)
+;
+withdraw_own_want(Peer, List(Peer), Speech, Speech)
+;
 withdraw_offer(Peer, Peer, List(Peer), Peer, Speech, Speech)
 ;
 withdraw_want(Peer, Peer, List(Peer), Speech, Speech)
@@ -137,6 +153,14 @@ offer(Peer, Peer, Peer, Speech, Speech)
 ;
 want(Peer, Peer, Speech, Speech)
 ;
+offer_own(Peer, Peer, Speech, Speech)
+;
+want_own(Peer, Speech, Speech)
+;
+withdraw_own_offer(Peer, Peer, Speech, Speech)
+;
+withdraw_own_want(Peer, Speech, Speech)
+;
 withdraw_offer(Peer, Peer, Peer, Speech, Speech)
 ;
 withdraw_want(Peer, Peer, Speech, Speech)
@@ -181,15 +205,15 @@ listed(Peer, Speech)
 ;
 offered(Peer, Speech, Peer, Speech)
 ;
-sent_offer(Peer, Peer, Speech, Peer, Speech)
-;
 wall_offer(Peer, Speech, Peer, Speech)
+;
+sent_offer(Peer, Peer, Speech, Peer, Speech)
 ;
 wanted(Speech, Peer, Speech)
 ;
-sent_want(Peer, Speech, Peer, Speech)
-;
 wall_want(Speech, Peer, Speech)
+;
+sent_want(Peer, Speech, Peer, Speech)
 .
 Speech    ::= speech(Utterance, Peer).
 Utterance ::= utterance(String) ; Speech.

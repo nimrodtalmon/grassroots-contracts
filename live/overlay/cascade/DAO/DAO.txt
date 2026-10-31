@@ -1,0 +1,27 @@
+% DAO: Grassroots DAO --- an experimental contract by Nimrod Talmon with Claude, 2026-10-31, after The DAO: a group that decides by proposals and votes.  Outside the owners' process.
+% Owner: Nimrod (experimental).  No paper.
+% Extends: GKK, Grassroots Keys and Knowledge, GSC's (programs/gsc).  It cites GKK:1 to GKK:3 whole and restates none.
+% Defines: DAO, steward, member, proposal, vote.  A DAO is named by its steward, as a group by its leader (GSN).  Clause 6 is undertaken: the platform records and relays every vote and outcome, so every member can check the steward's count, but it does not count.
+% Schemas: DAO.glp beside this file.
+DAO: Grassroots DAO
+Alice and Bob are persons.  DAO extends GKK.
+1. ■ Founding.  Alice may found a DAO, of which they are the steward and first member.
+2. ■ Joining.  Alice, the steward of a DAO, may admit Bob, whom they know, by an act of both.
+3. ■ Proposing.  A member of a DAO may make a proposal to it; its steward records it and delivers it to every other member.
+4. ■ Voting.  A member may vote for or against a proposal of their DAO, once and before it is decided; its steward records the vote.
+5. ■ Deciding.  The steward may decide a proposal, passed or rejected, once, and delivers the decision to every other member.
+6. ○ Majority.  The steward decides a proposal passed exactly when more than half of the members voted for it.
+Pragmas
+DAOs: the DAOs Alice is a member of.
+Proposals: the proposals Alice sees.
+For: the yes votes Alice counted.
+Against: the no votes Alice counted.
+Passed: the passed proposals Alice knows.
+Founding: Alice [Found] <name>
+Joining: Alice [Admit] <person>
+  Bob: Alice invites you to their DAO.
+Proposing: Bob [Propose] <proposal>
+  Alice [Propose own] <proposal>
+Voting: Bob [Vote for] <proposal> [Vote against] <proposal>
+  Alice [Vote own for] <proposal> [Vote own against] <proposal>
+Deciding: Alice [Pass] <proposal> [Reject] <proposal>

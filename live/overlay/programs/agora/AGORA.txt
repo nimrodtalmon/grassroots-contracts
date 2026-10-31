@@ -1,4 +1,4 @@
-% AGORA: Grassroots Barter --- an experimental contract by Nimrod Talmon with Claude; version 2, 2026-10-31, over GB.  Outside the owners' process.
+% AGORA: Grassroots Barter --- an experimental contract by Nimrod Talmon with Claude; version 2, 2026-10-31, over GB; the keeper's own wall and posts added the same day.  Outside the owners' process.
 % Owner: Nimrod (experimental).  No paper.
 % Extends: GB, Grassroots Bonds, Currencies' (programs/currencies/bonds), and through it GKK.  It cites their clauses whole and restates none.
 % Defines: item, a one-of-a-kind thing named by its maker; Alice-item, an item Alice made; instrument, a coin, a bond or an item; market, keeper, member, wall.  Whoever holds a Bob-item knows Bob, as a holder of a Bob-coin knows Bob.
@@ -8,8 +8,8 @@ Alice, Bob and Carol are persons.  AGORA extends GB.  An instrument is a coin, a
 1. ■ Making.  Alice may make an Alice-item, one of a kind, which they then hold.
 2. ■ Market.  Alice may open a market, of which they are the keeper and first member.
 3. ■ Joining.  Alice, the keeper of a market, may admit Bob, whom they know, by an act of both; Bob thereby agrees to come to know whoever posts to the market.
-4. ■ Posting.  Bob, a member of a market, may post to its wall an item they hold, or something they want; Alice, its keeper, delivers the post to every member, who thereby knows Bob.
-5. ■ Withdrawal.  Bob may withdraw a post of theirs; Alice, the keeper, removes it from the wall of every member it was delivered to.
+4. ■ Posting.  Bob, a member of a market, may post to its wall an item they hold, or something they want, and so may Alice, its keeper; the keeper sees every post on their own wall and delivers it to every other member, who thereby knows its poster.
+5. ■ Withdrawal.  Bob may withdraw a post of theirs; Alice, the keeper, removes it from their own wall and from the wall of every member it was delivered to.
 6. ■ Trading.  GB's swap and escrow apply to items as to coins and bonds.
 Pragmas
 Items: the items Alice holds.
@@ -21,7 +21,9 @@ Market: Alice [Open] <market>
 Joining: Alice [Admit] <person>
   Bob: Alice invites you to their market.
 Posting: Bob [Offer] <maker> <item> [Want] <description>
+  Alice [Offer own] <maker> <item> [Want own] <description>
 Withdrawal: Bob [Withdraw] <post>
+  Alice [Withdraw own offer] <post> [Withdraw own want] <post>
 Trading: Alice [Barter] <maker given> <item given> <maturity given> <amount given> <maker wanted> <item wanted> <maturity wanted> <amount wanted>
   Bob: Alice asks to trade with you.
   Alice [Deposit item] <maker> <item>

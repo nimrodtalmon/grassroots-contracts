@@ -103,7 +103,7 @@ details.raw pre{font:11px var(--mono);white-space:pre-wrap;color:var(--mute);mar
 <script>
 const C = (new URLSearchParams(location.search).get('c') || '').toLowerCase();
 const PERSONS = ['alice','bob','carol','dave'];
-const FAM = {identity: ['#5b8def', '#3a64c4'], social: ['#34c3ae', '#169482'], care: ['#a98be3', '#7552c4'], money: ['#f6c25a', '#e0911c'], mobility: ['#f79a78', '#dc5d3c']};
+const FAM = {identity: ['#5b8def', '#3a64c4'], social: ['#34c3ae', '#169482'], care: ['#a98be3', '#7552c4'], money: ['#f6c25a', '#e0911c'], mobility: ['#f79a78', '#dc5d3c'], governance: ['#7b8cff', '#4a54d6']};
 const META = (window.DATA ? window.DATA.contracts : []).find(c => c.id.toLowerCase() === C);
 let SPEC = null, ST = null, VER = -1, SEL = 'alice';
 const ui = {}; PERSONS.forEach(p => ui[p] = {tab: null, form: null});
@@ -203,10 +203,11 @@ function formFields(prop, s, p){
   const paired = new Set();
   prop.args.forEach((type, k) => {
     const i = k + 1, s1 = srcOf(i), s2 = srcOf(i + 1);
-    if (i === me || i + 1 === me || !s1 || !s2 || s1[1] !== s2[1] || paired.has(i)) return;
+    const inGroup = j => (a.groups || []).some(x => x[0] === j || x[1] === j);
+    if (i === me || i + 1 === me || inGroup(i) || inGroup(i + 1) || !s1 || !s2 || s1[1] !== s2[1] || paired.has(i)) return;
     const rows = s.atoms.filter(t => fn(t) === s1[1] && argsOf(t).length >= 2).map(t => [t.a[0], t.a[1]]);
     const opts = rows.filter((r, j) => rows.findIndex(q => JSON.stringify(q) === JSON.stringify(r)) === j);
-    const label = (variantLabel(prop, i + 1) || prop.fields[i + 1] || s1[1]).replace(/^(amount|item) /, 'item ');
+    const label = (variantLabel(prop, i + 1) || prop.fields[i + 1] || prop.fields[i] || s1[1].replace(/^wall_|^sent_/, '').replace(/_/g, ' ')).replace(/^(amount|item) /, 'item ');
     out.push({i, pair: true, kind: 'pick', label, opts: opts.map(r => ({pair: r}))});
     paired.add(i); paired.add(i + 1);
   });
@@ -214,7 +215,11 @@ function formFields(prop, s, p){
     const i = k + 1;
     if (paired.has(i) || i === me || (a.groups || []).some(x => x[0] === i || x[1] === i)) return;
     const label = variantLabel(prop, i) || prop.fields[i] || (type === 'Peer' ? 'person' : type === 'Integer' ? 'number' : type === 'Speech' ? 'text' : type);
-    const opts = optionsFor(prop, i, s, p);
+    let opts = optionsFor(prop, i, s, p);
+    // a maker or an issuer may well be the person themselves
+    if (opts && type === 'Peer' && !srcOf(i) && /maker|issuer|post/.test(label)) opts = [p, ...opts.filter(q => q !== p)];
+    const prevPeer = out.find(o => o.i === i - 1 && /maker|issuer|post/.test(o.label));
+    if (!opts && type === 'Speech' && prevPeer && /^(text|post)$/.test(label)) { out.push({i, kind: 'text', label: 'item'}); return; }
     if (opts) out.push({i, kind: 'pick', label, opts});
     else if (type === 'Integer') out.push({i, kind: 'num', label});
     else out.push({i, kind: 'text', label});
@@ -230,9 +235,12 @@ function build(prop, p, vals){
     else if (f.pair){ args[f.i-1] = f.v.pair[0]; args[f.i] = f.v.pair[1]; }
     else if (f.kind === 'num') args[f.i-1] = parseInt(f.v, 10);
     else if (f.kind === 'text'){
-      // an item is named by its maker: a text right after a maker field is spoken by that maker
-      const prev = vals.find(g => g.i === f.i - 1 && /maker/.test(g.label));
-      args[f.i-1] = S('speech', S('utterance', f.v), prev && typeof prev.v === 'string' ? prev.v : p);
+      // an item is named by its maker: a text right after a person field is spoken by that person;
+      // a text the person already holds is used as it is held
+      const prev = vals.find(g => g.i === f.i - 1 && typeof g.v === 'string' && PERSONS.includes(g.v));
+      const who = prev && /maker|post|issuer/.test(prev.label) ? prev.v : null;
+      const known = (KNOWN[p] || []).filter(k => k.a[0].a && k.a[0].a[0] === f.v);
+      args[f.i-1] = known.find(k => !who || k.a[1] === who) || S('speech', S('utterance', f.v), who || p);
     }
     else args[f.i-1] = f.v;
   }
@@ -241,6 +249,16 @@ function build(prop, p, vals){
 }
 
 /* ---- drawing ---- */
+const pairText = ([a, b]) => PERSONS.includes(a) ? `${show(b)} · by ${cap(a)}` : PERSONS.includes(b) ? `${show(a)} · by ${cap(b)}` : `${show(a)} · ${show(b)}`;
+const KNOWN = {};
+function speeches(t, out = []){
+  if (Array.isArray(t)) t.forEach(x => speeches(x, out));
+  else if (t && typeof t === 'object' && t.f){
+    if (t.f === 'speech' && isS(t.a[0], 'utterance')){ if (!out.some(o => JSON.stringify(o) === JSON.stringify(t))) out.push(t); }
+    else t.a.forEach(x => speeches(x, out));
+  }
+  return out;
+}
 const mmss = n => `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
 let startedAt = null;
 function header(){
@@ -312,10 +330,12 @@ function phone(p){
     const vars = SPEC.proposals.filter(y => y.label === f.label);
     h += `<div class="form"><b>${esc(f.label)}</b>` + (vars.length > 1 ? `<label>Kind</label><select data-variant="1">${vars.map(v => `<option value="${v.name}" ${v.name === f.name ? 'selected' : ''}>${esc(variantName(v))}</option>`).join('')}</select>` : '') + fields.map(fl => {
       const id = `${p}-${f.name}-${fl.i}`;
-      if (fl.kind === 'group' || fl.kind === 'pick') return `<label>${esc(fl.label)}</label><select id="${id}">${fl.opts.map((o, j) => `<option value="${j}">${esc(o && o.pair ? show(o.pair[1]) + ' · made by ' + cap(o.pair[0]) : show(o))}</option>`).join('') || '<option value="">None yet</option>'}</select>`;
-      return `<label>${esc(fl.label)}</label><input id="${id}" ${fl.kind === 'num' ? 'type="number" value="1"' : 'placeholder="Type…"'}>`;
+      if (fl.kind === 'group' || fl.kind === 'pick') return `<label>${esc(fl.label)}</label><select id="${id}">${fl.opts.map((o, j) => `<option value="${j}">${esc(o && o.pair ? pairText(o.pair) : show(o))}</option>`).join('') || '<option value="">None yet</option>'}</select>`;
+      return `<label>${esc(fl.label)}</label><input id="${id}" ${fl.kind === 'num' ? 'type="number" value="1"' : `placeholder="Type…" list="dl-${p}"`}>`;
     }).join('') + `<button class="go" data-go="${f.name}">Propose</button></div>`;
   }
+  KNOWN[p] = speeches(s.atoms);
+  h += `<datalist id="dl-${p}">${[...new Set(KNOWN[p].map(k => k.a[0].a[0]))].map(t => `<option value="${esc(t)}">`).join('')}</datalist>`;
   h += `</div><details class="raw"><summary>Machine state</summary><pre>${esc(s.atoms.map(show).join('\n') || '—')}</pre></details></div>`;
   d.innerHTML = h;
   d.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { ui[p].tab = b.dataset.tab; ui[p].form = null; render(); });
