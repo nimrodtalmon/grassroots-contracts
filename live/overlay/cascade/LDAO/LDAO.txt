@@ -1,0 +1,15 @@
+% LDAO: Liquid DAO --- an experimental contract by Nimrod Talmon with Claude, 2026-10-31.  Outside the owners' process.
+% Owner: Nimrod (experimental).  No paper.
+% Extends: DAO, Grassroots DAO (programs/dao), and through it GKK.  It cites their clauses whole and restates none.
+% Defines: delegate, delegation; my_delegate(c, n) at the member, delegation(m, c, n) at the steward.
+% Schemas: LDAO.glp beside this file, written by tools/contracts.py.
+LDAO: Liquid DAO
+Alice and Bob are persons.  LDAO extends DAO.
+1. ■ Delegating.  A member of a DAO may make another member, whom they know, their delegate, one at a time; the steward records it.
+2. ■ Revoking.  A member may revoke their delegation at any time; the steward erases it.
+3. ○ Counting.  The steward counts the vote of a member who did not vote on a proposal as their delegate's vote, and so on along the chain of delegates.
+Pragmas
+Delegate: my delegate in each DAO.
+Delegations: the delegations Alice records.
+Delegating: Bob [Delegate] <delegate>
+Revoking: Bob [Revoke] <delegate>

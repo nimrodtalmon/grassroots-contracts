@@ -1,6 +1,8 @@
 #!/bin/bash
-# Registers AGORA and DAO in the GLP repository's cascade.sh, so that `bash cascade.sh agora` and `bash cascade.sh dao` run the cascade on them.
+# Registers the experimental contracts in the GLP repository's cascade.sh, so that `bash cascade.sh <name>` runs the cascade on each.
 set -e
 G="${1:-.}"
-grep -q '^    agora)' "$G/cascade.sh" || sed -i '/^    gai)  FILE=GAI;/a\    agora) FILE=AGORA; OWNER="programs/agora";             PAPER="";                           PLAYDIR="" ;;' "$G/cascade.sh"
-grep -q '^    dao)' "$G/cascade.sh" || sed -i '/^    gai)  FILE=GAI;/a\    dao)   FILE=DAO;   OWNER="programs/dao";               PAPER="";                           PLAYDIR="" ;;' "$G/cascade.sh"
+for c in agora dao fdao stay lib ldao joint rec; do
+  C=$(echo $c | tr a-z A-Z)
+  grep -q "^    $c)" "$G/cascade.sh" || sed -i "/^    gai)  FILE=GAI;/a\\    $c) FILE=$C; OWNER=\"programs/$c\"; PAPER=\"\"; PLAYDIR=\"\" ;;" "$G/cascade.sh"
+done

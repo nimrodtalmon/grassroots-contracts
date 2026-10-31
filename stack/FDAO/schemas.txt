@@ -1,0 +1,148 @@
+Environment predicates: today
+
+establish(Alice?) :
+    at Alice: not identity, +identity
+
+acquaint(Alice?, Bob?) :
+    at Alice: identity, +knows(Bob)
+    at Bob: identity, +knows(Alice)
+
+introduce(Alice?, Bob?; c) :
+    at Alice: identity, knows(Bob), knows(c)
+    at Bob: identity, knows(Alice), +knows(c)
+
+found(Alice?; n) :
+    at Alice: identity, not member(<Alice>.n), +member(<Alice>.n), +listed(Alice, n)
+
+admit(Alice?, Bob?; n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), knows(Bob), not listed(Bob, n), +listed(Bob, n)
+    at Bob: identity, not member(<Alice>.n), +member(<Alice>.n)
+
+propose(Bob?, Alice; x, n) :
+    at Bob: identity, member(<Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), knows(Bob), not proposal(x, Bob, n), +proposal(x, Bob, n)
+
+propose_own(Alice?; x, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), not proposal(x, Alice, n), +proposal(x, Alice, n)
+
+deliver_proposal(Alice, Bob; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), listed(Bob, n), knows(o), not sent(Bob, x, n), +sent(Bob, x, n)
+    at Bob: identity, member(<Alice>.n), +proposal(x, o, n)
+
+deliver_own_proposal(Alice, Bob; x, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, Alice, n), listed(Bob, n), not sent(Bob, x, n), +sent(Bob, x, n)
+    at Bob: identity, member(<Alice>.n), +proposal(x, Alice, n)
+
+vote_for(Bob?, Alice; x, o, n) :
+    at Bob: identity, member(<Alice>.n), proposal(x, o, n), not voted(x, o, n), +voted(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, n), not counted(x, o, Bob, n), not decided(x, o, n), +yes_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+
+vote_own_for(Alice?; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not counted(x, o, Alice, n), not voted(x, o, n), not decided(x, o, n), +yes_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, n)
+
+vote_against(Bob?, Alice; x, o, n) :
+    at Bob: identity, member(<Alice>.n), proposal(x, o, n), not voted(x, o, n), +voted(x, o, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, n), not counted(x, o, Bob, n), not decided(x, o, n), +no_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+
+vote_own_against(Alice?; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not counted(x, o, Alice, n), not voted(x, o, n), not decided(x, o, n), +no_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, n)
+
+pass(Alice?; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not decided(x, o, n), +passed_proposal(x, o, n), +decided(x, o, n)
+
+deliver_pass(Alice, Bob; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, o, n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
+    at Bob: identity, member(<Alice>.n), +passed_proposal(x, o, n), +decided(x, o, n)
+
+reject(Alice?; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, n), not decided(x, o, n), +rejected_proposal(x, o, n), +decided(x, o, n)
+
+deliver_reject(Alice, Bob; x, o, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), rejected_proposal(x, o, n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
+    at Bob: identity, member(<Alice>.n), +rejected_proposal(x, o, n), +decided(x, o, n)
+
+mint_coin(Alice?; k) :
+    at Alice: identity, +k.coin(Alice)
+
+mint_bond(Alice?; d, k, t) | d > t :
+    at Alice: identity, date(t), +k.bond(Alice, d)
+
+first_date(Alice; d) :
+    at Alice: identity, today(d), not dated, +date(d), +dated
+
+advance(Alice; t, t1, d) | t1 = t + 1, t1 <= d :
+    at Alice: identity, today(d), +date(t1), -date(t)
+
+swap_cc(Alice?, Bob?; u, k, v, k1) :
+    at Alice: identity, knows(Bob), +k1.coin(v), +knows(v), -k.coin(u)
+    at Bob: identity, knows(Alice), +k.coin(u), +knows(u), -k1.coin(v)
+
+swap_cb(Alice?, Bob?; u, k, v, d1, k1) :
+    at Alice: identity, knows(Bob), +k1.bond(v, d1), +knows(v), -k.coin(u)
+    at Bob: identity, knows(Alice), +k.coin(u), +knows(u), -k1.bond(v, d1)
+
+swap_bc(Alice?, Bob?; u, d, k, v, k1) :
+    at Alice: identity, knows(Bob), +k1.coin(v), +knows(v), -k.bond(u, d)
+    at Bob: identity, knows(Alice), +k.bond(u, d), +knows(u), -k1.coin(v)
+
+swap_bb(Alice?, Bob?; u, d, k, v, d1, k1) :
+    at Alice: identity, knows(Bob), +k1.bond(v, d1), +knows(v), -k.bond(u, d)
+    at Bob: identity, knows(Alice), +k.bond(u, d), +knows(u), -k1.bond(v, d1)
+
+pay(Alice?, Bob; k) :
+    at Alice: identity, knows(Bob), -k.coin(Bob)
+    at Bob: identity, +k.coin(Bob)
+
+redeem_cc(Alice?, Bob; r) :
+    at Alice: identity, knows(Bob), +coin(r), +knows(r), -coin(Bob)
+    at Bob: identity, +coin(Bob), -coin(r)
+
+redeem_cb(Alice?, Bob; r, d1) :
+    at Alice: identity, knows(Bob), +bond(r, d1), +knows(r), -coin(Bob)
+    at Bob: identity, +coin(Bob), -bond(r, d1)
+
+redeem_bc(Alice?, Bob; d, r, t) | d <= t :
+    at Alice: identity, knows(Bob), +coin(r), +knows(r), -bond(Bob, d)
+    at Bob: identity, date(t), +bond(Bob, d), -coin(r)
+
+redeem_bb(Alice?, Bob; d, r, d1, t) | d <= t :
+    at Alice: identity, knows(Bob), +bond(r, d1), +knows(r), -bond(Bob, d)
+    at Bob: identity, date(t), +bond(Bob, d), -bond(r, d1)
+
+deposit_c(Alice?, Carol?; u, k) :
+    at Alice: identity, knows(Carol), -k.coin(u)
+    at Carol: identity, knows(Alice), +k.coin(u), +knows(u)
+
+deposit_b(Alice?, Carol?; u, d, k) :
+    at Alice: identity, knows(Carol), -k.bond(u, d)
+    at Carol: identity, knows(Alice), +k.bond(u, d), +knows(u)
+
+release_c(Carol?, Bob?; u, k) :
+    at Carol: identity, knows(Bob), -k.coin(u)
+    at Bob: identity, knows(Carol), +k.coin(u), +knows(u)
+
+release_b(Carol?, Bob?; u, d, k) :
+    at Carol: identity, knows(Bob), -k.bond(u, d)
+    at Bob: identity, knows(Carol), +k.bond(u, d), +knows(u)
+
+return_c(Carol?, Alice?; u, k) :
+    at Carol: identity, knows(Alice), -k.coin(u)
+    at Alice: identity, knows(Carol), +k.coin(u), +knows(u)
+
+return_b(Carol?, Alice?; u, d, k) :
+    at Carol: identity, knows(Alice), -k.bond(u, d)
+    at Alice: identity, knows(Carol), +k.bond(u, d), +knows(u)
+
+fund(Bob?, Alice; u, k, n) :
+    at Bob: identity, member(<Alice>.n), -k.coin(u)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), +k.dao_coin(u, n), +knows(u)
+
+fund_own(Alice?; u, k, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), +k.dao_coin(u, n), -k.coin(u)
+
+grant(Alice?, Bob; x, u, k, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Bob, n), not granted(x, Bob, n), +granted(x, Bob, n), -k.dao_coin(u, n)
+    at Bob: identity, +k.coin(u), +knows(u)
+
+grant_own(Alice?; x, u, k, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, Alice, n), not granted(x, Alice, n), +granted(x, Alice, n), +k.coin(u), -k.dao_coin(u, n)

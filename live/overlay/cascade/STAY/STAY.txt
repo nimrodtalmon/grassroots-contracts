@@ -1,0 +1,21 @@
+% STAY: Grassroots Stays --- an experimental contract by Nimrod Talmon with Claude, 2026-10-31.  Outside the owners' process.
+% Owner: Nimrod (experimental).  No paper.
+% Extends: GB, Grassroots Bonds, Currencies' (programs/currencies/bonds).  Through it it extends GKK; it cites their clauses whole and restates none.
+% Defines: place, stay, guest, review; a night is a day of GB's calendar.
+% Schemas: STAY.glp beside this file, written by tools/contracts.py.
+STAY: Grassroots Stays
+Alice and Bob are persons.  STAY extends GB.
+1. ■ Hosting.  Alice may list a place, one of a kind, as their own.
+2. ■ Booking.  Bob, who knows Alice, and Alice may jointly decide that Bob stays at Alice's place on a night later than Alice's date, Bob paying in Alice-coins; a place is booked at most once a night.
+3. ■ Cancelling.  Before the night, Alice may cancel a stay, paying Bob back.
+4. ◆ Reviewing.  After the night, Bob may review their stay, once; Alice keeps the review.
+Pragmas
+Places: the places Alice hosts.
+Stays: the stays Alice has.
+Guests: the guests Alice hosts.
+Reviews: the reviews Alice received.
+Hosting: Alice [List place] <place>
+Booking: Bob [Book] <place> <night> <amount>
+  Alice: Bob asks to stay at your place.
+Cancelling: Alice [Cancel] <amount>
+Reviewing: Bob [Review] <review>

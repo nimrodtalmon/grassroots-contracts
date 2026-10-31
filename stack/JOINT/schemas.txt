@@ -1,0 +1,45 @@
+establish(Alice?) :
+    at Alice: not identity, +identity
+
+acquaint(Alice?, Bob?) :
+    at Alice: identity, +knows(Bob)
+    at Bob: identity, +knows(Alice)
+
+introduce(Alice?, Bob?; c) :
+    at Alice: identity, knows(Bob), knows(c)
+    at Bob: identity, knows(Alice), +knows(c)
+
+mint(Alice?; k) :
+    at Alice: identity, +k.coin(Alice)
+
+swap(Alice?, Bob?; u, k, v, k1) :
+    at Alice: identity, knows(Bob), +k1.coin(v), +knows(v), -k.coin(u)
+    at Bob: identity, knows(Alice), +k.coin(u), +knows(u), -k1.coin(v)
+
+pay(Alice?, Bob; k) :
+    at Alice: identity, knows(Bob), -k.coin(Bob)
+    at Bob: identity, +k.coin(Bob)
+
+redeem(Alice?, Bob; r) :
+    at Alice: identity, knows(Bob), +coin(r), +knows(r), -coin(Bob)
+    at Bob: identity, +coin(Bob), -coin(r)
+
+open_account(Alice?, Bob?; n) :
+    at Alice: identity, knows(Bob), not account(<Alice>.n), +account(<Alice>.n), +partner(Bob, n)
+    at Bob: identity, knows(Alice), not account(<Alice>.n), +account(<Alice>.n), +partner(Alice, n)
+
+deposit_opener(Alice?, Bob; u, k, n) :
+    at Alice: identity, account(<Alice>.n), partner(Bob, n), +k.joint(u, <Alice>.n), -k.coin(u)
+    at Bob: identity, account(<Alice>.n), +k.joint(u, <Alice>.n), +knows(u)
+
+deposit_partner(Alice?, Bob; u, k, n) :
+    at Alice: identity, account(<Bob>.n), +k.joint(u, <Bob>.n), -k.coin(u)
+    at Bob: identity, account(<Bob>.n), partner(Alice, n), +k.joint(u, <Bob>.n), +knows(u)
+
+withdraw_opener(Alice?, Bob?; u, k, n) :
+    at Alice: identity, account(<Alice>.n), partner(Bob, n), +k.coin(u), -k.joint(u, <Alice>.n)
+    at Bob: identity, account(<Alice>.n), -k.joint(u, <Alice>.n)
+
+withdraw_partner(Alice?, Bob?; u, k, n) :
+    at Alice: identity, account(<Bob>.n), +k.coin(u), -k.joint(u, <Bob>.n)
+    at Bob: identity, account(<Bob>.n), partner(Alice, n), -k.joint(u, <Bob>.n)

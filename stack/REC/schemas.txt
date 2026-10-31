@@ -1,0 +1,23 @@
+establish(Alice?) :
+    at Alice: not identity, +identity
+
+acquaint(Alice?, Bob?) :
+    at Alice: identity, +knows(Bob)
+    at Bob: identity, +knows(Alice)
+
+introduce(Alice?, Bob?; c) :
+    at Alice: identity, knows(Bob), knows(c)
+    at Bob: identity, knows(Alice), +knows(c)
+
+recommend(Alice?, Bob; s) :
+    at Alice: identity, knows(Bob), not recommended(Bob, s), +recommended(Bob, s)
+    at Bob: identity, +endorsement(Alice, s)
+
+show(Bob?, Carol; a, s) :
+    at Bob: identity, endorsement(a, s), knows(Carol), not shown(Carol, a, s), +shown(Carol, a, s)
+    at Carol: identity, +vouched(Bob, a, s)
+
+withdraw_recommendation(Bob, Alice?, Bob[shown(*, Alice, s)]; s) :
+    at Bob: identity, -endorsement(Alice, s)
+    at Alice: identity, -recommended(Bob, s)
+    at Bob[shown(*, Alice, s)]: identity, -vouched(Bob, Alice, s)
