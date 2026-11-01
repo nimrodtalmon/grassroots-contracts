@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+\newtcolorbox{contractbox}{colback=white,colframe=black!40,boxrule=0.5pt,arc=2pt,left=6pt,right=6pt,top=4pt,bottom=4pt}
+
+\title{GAS: A GLP App Store for Grassroots Social Contracts}
+\author{Nimrod Talmon\\Ben-Gurion University}
+\date{Draft, \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+GAS is a website that collects grassroots social contracts, shows how each contract is translated step by step into running code, and lets anyone use each contract live, as four people who each run the contract's platform.
+This document describes GAS and holds the example contracts written for it.
+\end{abstract}
+
+\section{Introduction}
+
+A grassroots social contract is written in English, clause by clause.
+The GLP repository\footnote{\url{https://github.com/EShapiro2/GLP}} carries a chain of tools, the cascade, that turns such a contract into its speech-act schemas, checks them, and compiles them into a platform that each person's device runs.
+GAS puts the contracts of that repository, and new ones, in one place where anyone can read them and try them.
+
+\section{The site}
+
+The site shows a graph of the contracts, the text of each contract, the layers of the cascade from the English text down to the platform's code, and a link to a live app for each compiled contract.
+It runs at \url{https://talmonlab.bgu.ac.il/glp}, and its code is at \url{https://github.com/nimrodtalmon/grassroots-contracts}.
+
+\section{The live server}
+
+One server process runs the compiled platform of each contract that someone opens.
+Each platform runs with four persons, Alice, Bob, Carol and Dave, in one GLP heap, and the web page sends each person's acts to that person's agent.
+
+\section{The example contracts}
+
+The contracts below were written for GAS.
+Each extends contracts of the GLP repository or of this collection, and cites their clauses without restating them.
+Each clause opens with its modality: $\blacksquare$ enforced, $\blacklozenge$ attested, $\circ$ undertaken.
+
+\input{contracts}
+
+\end{document}
