@@ -3,7 +3,8 @@
 %% term form programs/gsc reads.  The clauses are in REC.txt beside this
 %% file.  REC extends GKK, so the term holds their schemas first,
 %% as their own files give them, and then REC's own; tools/contracts.py in
-%% the grassroots-contracts repository writes it.
+%% the grassroots-contracts repository (github.com/nimrodtalmon/grassroots-contracts)
+%% writes it.
 %% ---------------------------------------------------------------------------
 
 NameTerm   ::= own(Integer) ; own_var(Constant) ; nvar(Constant)
@@ -52,8 +53,8 @@ contract_named(rec,
     schema(show, ['Bob', 'Carol'], [pvar(a), svar(s)],
        [rs(guarded, [atom(shown, [role(2), pvar(a), svar(s)])], [], [atom(identity, []), atom(endorsement, [pvar(a), svar(s)]), atom(knows, [role(2)])], [atom(shown, [role(2), pvar(a), svar(s)])]),
         rs(unguarded, [atom(vouched, [role(1), pvar(a), svar(s)])], [], [atom(identity, [])], [])]),
-%% REC:3, Withdrawing: from Bob and from every person Bob showed it to; withdrew(b, s) keeps Alice from making it again.
-    cschema(withdraw_recommendation, ['Bob', 'Alice', 'Bob'], [svar(s)], [],
+%% REC:3, Withdrawing: from Bob and from every person Carol whom Bob showed it to; withdrew(b, s) keeps Alice from making it again.  Bob comes first, the base of the listed role Carol, which the compiler to the canonical platform requires of a listed role whose base does not guard (vGLP, Section 5.4).
+    cschema(withdraw_recommendation, ['Bob', 'Alice', 'Carol'], [svar(s)], [],
        [rs(unguarded, [], [atom(endorsement, [role(2), svar(s)])], [atom(identity, [])], []),
         rs(guarded, [atom(withdrew, [role(1), svar(s)])], [atom(recommended, [role(1), svar(s)])], [atom(identity, [])], []),
         crs(listed(1, shown, [role(2), svar(s)]), unguarded, [], [atom(vouched, [role(1), role(2), svar(s)])], [atom(identity, [])], [])])]).

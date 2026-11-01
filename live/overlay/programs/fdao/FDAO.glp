@@ -3,7 +3,8 @@
 %% term form programs/gsc reads.  The clauses are in FDAO.txt beside this
 %% file.  FDAO extends DAO and GB, so the term holds their schemas first,
 %% as their own files give them, and then FDAO's own; tools/contracts.py in
-%% the grassroots-contracts repository writes it.
+%% the grassroots-contracts repository (github.com/nimrodtalmon/grassroots-contracts)
+%% writes it.
 %% ---------------------------------------------------------------------------
 
 NameTerm   ::= own(Integer) ; own_var(Constant) ; nvar(Constant)
@@ -47,17 +48,17 @@ contract_named(fdao, environment([today],
     schema(found, ['Alice'], [svar(n)],
        [rs(guarded, [atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(seats, [svar(n), num(1)])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]),
     schema(admit, ['Alice', 'Bob'], [svar(n)],
-       [rs(guarded, [atom(listed, [role(2), svar(n)]), atom(unseated, [svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], [atom(listed, [role(2), svar(n)])]),
+       [rs(guarded, [atom(listed, [role(2), svar(n)]), atom(unseated, [svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], []),
         rs(guarded, [atom(member, [nterm(ext(own(1), n))])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]),
     nschema(seat, ['Alice'], [svar(n), num(m), num(m1)], succ(num(m), num(m1)),
        [rs(unguarded, [atom(seats, [svar(n), num(m1)])], [atom(unseated, [svar(n)]), atom(seats, [svar(n), num(m)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]),
     schema(propose, ['Bob', 'Alice'], [svar(x), svar(n)],
        [rs(guarded, [], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []),
-        rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(knows, [role(1)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]),
+        rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]),
     schema(propose_own, ['Alice'], [svar(x), svar(n)],
        [rs(guarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])])]),
     schema(deliver_proposal, ['Alice', 'Bob'], [svar(x), pvar(o), svar(n)],
-       [rs(unguarded, [atom(sent, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)]), atom(knows, [pvar(o)])], [atom(sent, [role(2), svar(x), pvar(o), svar(n)])]),
+       [rs(unguarded, [atom(sent, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(sent, [role(2), svar(x), pvar(o), svar(n)])]),
         rs(unguarded, [atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]),
     schema(deliver_own_proposal, ['Alice', 'Bob'], [svar(x), svar(n)],
        [rs(unguarded, [atom(sent, [role(2), svar(x), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(sent, [role(2), svar(x), role(1), svar(n)])]),

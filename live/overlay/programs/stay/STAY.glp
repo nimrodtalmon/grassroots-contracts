@@ -3,7 +3,8 @@
 %% term form programs/gsc reads.  The clauses are in STAY.txt beside this
 %% file.  STAY extends GB, so the term holds their schemas first,
 %% as their own files give them, and then STAY's own; tools/contracts.py in
-%% the grassroots-contracts repository writes it.
+%% the grassroots-contracts repository (github.com/nimrodtalmon/grassroots-contracts)
+%% writes it.
 %% ---------------------------------------------------------------------------
 
 NameTerm   ::= own(Integer) ; own_var(Constant) ; nvar(Constant)

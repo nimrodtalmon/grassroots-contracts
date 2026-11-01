@@ -3,7 +3,8 @@
 %% term form programs/gsc reads.  The clauses are in JOINT.txt beside this
 %% file.  JOINT extends GC, so the term holds their schemas first,
 %% as their own files give them, and then JOINT's own; tools/contracts.py in
-%% the grassroots-contracts repository writes it.
+%% the grassroots-contracts repository (github.com/nimrodtalmon/grassroots-contracts)
+%% writes it.
 %% ---------------------------------------------------------------------------
 
 NameTerm   ::= own(Integer) ; own_var(Constant) ; nvar(Constant)
@@ -58,7 +59,7 @@ contract_named(joint,
 %% JOINT:1, Opening: the account <Alice>.n, held by both.
     schema(open_account, ['Alice', 'Bob'], [svar(n)],
        [rs(guarded, [atom(account, [nterm(ext(own(1), n))]), atom(partner, [role(2), svar(n)])], [], [atom(identity, []), atom(knows, [role(2)])], [atom(account, [nterm(ext(own(1), n))])]),
-        rs(guarded, [atom(account, [nterm(ext(own(1), n))]), atom(partner, [role(1), svar(n)])], [], [atom(identity, []), atom(knows, [role(1)])], [atom(account, [nterm(ext(own(1), n))])])]),
+        rs(guarded, [atom(account, [nterm(ext(own(1), n))]), atom(partner, [role(1), svar(n)])], [], [atom(identity, []), atom(knows, [role(1)])], [])]),
 %% JOINT:2, Depositing, by the opener.
     schema(deposit_opener, ['Alice', 'Bob'], [pvar(u), num(k), svar(n)],
        [rs(guarded, [times(num(k), atom(joint, [pvar(u), nterm(ext(own(1), n))]))], [times(num(k), atom(coin, [pvar(u)]))], [atom(identity, []), atom(account, [nterm(ext(own(1), n))]), atom(partner, [role(2), svar(n)])], []),

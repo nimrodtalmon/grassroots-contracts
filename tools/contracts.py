@@ -11,11 +11,11 @@ import re, sys, os
 
 GLP = sys.argv[1]
 
-TYPES = open(f'{GLP}/programs/agora/AGORA.glp').read()
-TYPES = TYPES[TYPES.index('NameTerm'):TYPES.index('%% contract_named(agora')]
+TYPES = open(f'{GLP}/programs/gas/dao/DAO.glp').read()
+TYPES = TYPES[TYPES.index('NameTerm'):TYPES.index('%% contract_named(dao')]
 
 PARENT_FILE = {'GKK': 'programs/gsc/GKK.glp', 'GC': 'programs/currencies/coins/GC.glp',
-               'GB': 'programs/currencies/bonds/GB.glp', 'DAO': 'programs/dao/DAO.glp',
+               'GB': 'programs/currencies/bonds/GB.glp', 'DAO': 'programs/gas/dao/DAO.glp',
                'GSG': 'programs/gsc/GSG.glp'}
 
 
@@ -91,7 +91,7 @@ class Contract:
         self.schemas.append(f'%% {comment}\n    {t}' if comment else '    ' + t)
 
     def write(self):
-        d = f'{GLP}/programs/{self.dir}'
+        d = f'{GLP}/programs/gas/{self.dir}'
         os.makedirs(d, exist_ok=True)
         env, base, seen = False, [], set()
         for p in self.extends:
@@ -105,7 +105,8 @@ class Contract:
 %% term form programs/gsc reads.  The clauses are in {self.name}.txt beside this
 %% file.  {self.name} extends {' and '.join(self.extends)}, so the term holds their schemas first,
 %% as their own files give them, and then {self.name}'s own; tools/contracts.py in
-%% the grassroots-contracts repository writes it.
+%% the grassroots-contracts repository (github.com/nimrodtalmon/grassroots-contracts)
+%% writes it.
 %% ---------------------------------------------------------------------------
 
 """
@@ -114,8 +115,8 @@ class Contract:
         text = head + TYPES + f'%% contract_named({self.name.lower()}, C): the contract, {self.name}.\nprocedure contract_named(Constant?, Declared).\n' + \
             open_ + ',\n'.join(base).lstrip() + ',\n' + ',\n'.join(self.schemas) + close
         open(f'{d}/{self.name}.glp', 'w').write(text)
-        txt = [f'% {self.name}: {self.title} --- an experimental contract by Nimrod Talmon with Claude, 2026-10-31.  Outside the owners\' process.',
-               '% Owner: Nimrod (experimental).  No paper.',
+        txt = [f'% {self.name}: {self.title} --- an example contract by Nimrod Talmon with Claude, 2026-10-31, revised 2026-11-01 against docs/speech-act-schemas-guide.md.',
+               '% Owner: GAS, the GLP app store.  The paper responsible: GAS (https://github.com/nimrodtalmon/grassroots-contracts/blob/main/paper/main.pdf), which prints this contract with the other example contracts.',
                f'% Extends: {self.extends_line}',
                f'% Defines: {self.defines}',
                f'% Schemas: {self.name}.glp beside this file, written by tools/contracts.py.',
@@ -131,7 +132,7 @@ C = []
 
 # ---------------------------------------------------------------- Funded DAO
 c = Contract('FDAO', 'Funded DAO', 'fdao', ['DAO', 'GB'],
-    'DAO, Grassroots DAO (programs/dao), and GB, Grassroots Bonds, Currencies\' (programs/currencies/bonds).  Through them it extends GKK; it cites their clauses whole and restates none.',
+    'DAO, Grassroots DAO (programs/gas/dao), and GB, Grassroots Bonds, Currencies\' (programs/currencies/bonds).  Through them it extends GKK; it cites their clauses whole and restates none.',
     'Alice and Bob are persons.  FDAO extends DAO and GB.',
     [('■', 'Funding', 'A member of a DAO may give it coins they hold; its steward, who is not asked, keeps them apart as the DAO\'s, and they leave the DAO only as grants.'),
      ('■', 'Granting', 'The steward may pay the proposer of a passed proposal, once per proposal, any amount of the DAO\'s coins of one issuer; the proposer is not asked.'),
@@ -213,7 +214,7 @@ C.append(c)
 
 # ---------------------------------------------------------------- Liquid DAO
 c = Contract('LDAO', 'Liquid DAO', 'ldao', ['DAO'],
-    'DAO, Grassroots DAO (programs/dao), and through it GKK.  It cites their clauses whole and restates none.',
+    'DAO, Grassroots DAO (programs/gas/dao), and through it GKK.  It cites their clauses whole and restates none.',
     'Alice and Bob are persons.  LDAO extends DAO.',
     [('■', 'Delegating', 'A member of a DAO, the steward included, may make another member, whom they know, their delegate in it, one at a time; the steward records the delegation.'),
      ('■', 'Revoking', 'A member may revoke their delegation at any time; the steward erases it.'),
@@ -258,7 +259,7 @@ c = Contract('JOINT', 'Joint Accounts', 'joint', ['GC'],
     'joint account, named by its opener as a group by its leader; k.joint(u, <a>.n) at both partners.')
 c.schema('open_account', ['Alice', 'Bob'], ['s:n'],
     [('guarded', ['account(<1>.n)', 'partner(R2, n)'], [], [ID, 'knows(R2)'], ['account(<1>.n)']),
-     ('guarded', ['account(<1>.n)', 'partner(R1, n)'], [], [ID, 'knows(R1)'], ['account(<1>.n)'])],
+     ('guarded', ['account(<1>.n)', 'partner(R1, n)'], [], [ID, 'knows(R1)'], [])],
     comment='JOINT:1, Opening: the account <Alice>.n, held by both.')
 c.schema('deposit_opener', ['Alice', 'Bob'], ['p:u', 'n:k', 's:n'],
     [('guarded', ['k*joint(u, <1>.n)'], ['k*coin(u)'], [ID, 'account(<1>.n)', 'partner(R2, n)'], []),
@@ -298,11 +299,11 @@ c.schema('show', ['Bob', 'Carol'], ['p:a', 's:s'],
     [('guarded', ['shown(R2, a, s)'], [], [ID, 'endorsement(a, s)', 'knows(R2)'], ['shown(R2, a, s)']),
      ('unguarded', ['vouched(R1, a, s)'], [], [ID], [])],
     comment='REC:2, Showing: Bob shows Carol that a recommends Bob for s.')
-c.schema('withdraw_recommendation', ['Bob', 'Alice', 'Bob'], ['s:s'],
+c.schema('withdraw_recommendation', ['Bob', 'Alice', 'Carol'], ['s:s'],
     [('unguarded', [], ['endorsement(R2, s)'], [ID], []),
      ('guarded', ['withdrew(R1, s)'], ['recommended(R1, s)'], [ID], []),
      ('unguarded', [], ['vouched(R1, R2, s)'], [ID], [], (1, 'shown', ['R2', 's']))],
-    comment='REC:3, Withdrawing: from Bob and from every person Bob showed it to; withdrew(b, s) keeps Alice from making it again.', listed=True)
+    comment='REC:3, Withdrawing: from Bob and from every person Carol whom Bob showed it to; withdrew(b, s) keeps Alice from making it again.  Bob comes first, the base of the listed role Carol, which the compiler to the canonical platform requires of a listed role whose base does not guard (vGLP, Section 5.4).', listed=True)
 C.append(c)
 
 for c in C:
