@@ -1,13 +1,13 @@
 % LDAO: Liquid DAO --- an experimental contract by Nimrod Talmon with Claude, 2026-10-31.  Outside the owners' process.
 % Owner: Nimrod (experimental).  No paper.
 % Extends: DAO, Grassroots DAO (programs/dao), and through it GKK.  It cites their clauses whole and restates none.
-% Defines: delegate, delegation; my_delegate(c, <a>.n) at the member, a the steward, delegation(m, c, n) at the steward.
+% Defines: delegate, delegation; my_delegate(c, <a>.n) at the member, a the steward, delegation(m, c, n) at the steward; a vote counted through a delegate is recorded as the member's own, yes_vote or no_vote, with its ballots, and followed(x, o, b, c, n) at the steward names the delegate c whose vote b followed.
 % Schemas: LDAO.glp beside this file, written by tools/contracts.py.
 LDAO: Liquid DAO
 Alice and Bob are persons.  LDAO extends DAO.
 1. ■ Delegating.  A member of a DAO, the steward included, may make another member, whom they know, their delegate in it, one at a time; the steward records the delegation.
 2. ■ Revoking.  A member may revoke their delegation at any time; the steward erases it.
-3. ○ Counting.  In deciding a proposal, the steward counts a member who did not vote on it as voting as their delegate did, or, if the delegate did not vote either, as the delegate's delegate did, and so on; a member whose chain of delegates ends with no vote, or comes back to them, is not counted as voting.
+3. ■ Counting.  Once the delegate of a member who has not voted on a proposal has a vote on it counted, the steward counts the member as voting the same way, and the member cannot vote on it any more; so a vote passes down a chain of delegates, and a member whose chain ends with no vote, or runs into a cycle, is not counted.
 Pragmas
 Delegate: my delegate in each DAO.
 Delegations: the delegations Alice records.

@@ -22,6 +22,8 @@ found(Peer, Speech)
 ;
 admit(Peer, Peer, Speech)
 ;
+seat(Peer, Speech, Integer)
+;
 propose(Peer, Peer, Speech, Speech)
 ;
 propose_own(Peer, Speech, Speech)
@@ -34,9 +36,17 @@ vote_for(Peer, Peer, Speech, Peer, Speech)
 ;
 vote_own_for(Peer, Speech, Peer, Speech)
 ;
+tally_for(Peer, Speech, Peer, Speech, Integer)
+;
+deliver_yes_vote(Peer, Peer, Speech, Peer, Peer, Speech)
+;
 vote_against(Peer, Peer, Speech, Peer, Speech)
 ;
 vote_own_against(Peer, Speech, Peer, Speech)
+;
+tally_against(Peer, Speech, Peer, Speech, Integer)
+;
+deliver_no_vote(Peer, Peer, Speech, Peer, Peer, Speech)
 ;
 pass(Peer, Speech, Peer, Speech)
 ;
@@ -53,6 +63,10 @@ revoke(Peer, Peer, Peer, Speech)
 delegate_own(Peer, Peer, Speech)
 ;
 revoke_own(Peer, Peer, Speech)
+;
+count_for(Peer, Speech, Peer, Peer, Peer, Speech)
+;
+count_against(Peer, Speech, Peer, Peer, Peer, Speech)
 .
 
 Proposal ::=
@@ -95,7 +109,7 @@ Request ::= propose(Proposal).
 
 %% The widget declarations of the platform (vGLP, Section 6.2, Definition "Widget Declaration"; "The words a platform shows"): its approval question drawn by the construct family's approval_sentence, and its request question by its social_menu, with the label of each request and the name of each field the person fills, as the contract's pragmas give them, label(F, S) for the request F and label(F, I, S) for its place I; where the button of each request is drawn, act(F, T, M, Ps, Gs, Is), T the tab of its contract, M the place of the person proposing it, Ps the places of the persons it names beside them, which a person the view lists fills, Gs the groups it names, group(J, K), the leader at place J and the group's name at place K, which a group the view lists fills, and Is the items it names, item(K, P), the speech act at place K, which a row of the list of the predicate P fills; meeting(F, I) for an acquaintance schema, its peer at place I, which a field for the key fills where the peer is not listed; and text(F, Ws), the question of an act with one guarding role, text of its request form, each word say(S) or at(I), the person at place I (README.md beside this file, "The pragmas").
 Approval =::= approval_sentence.
-Menu =::= social_menu([label(establish, "Establish"), act(establish, "Contacts", 1, [], [], [forb(identity, [])]), label(acquaint, "Acquaint"), label(acquaint, 2, "person"), act(acquaint, "Contacts", 1, [2], [], [req(identity, []), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), meeting(acquaint, 2), label(introduce, "Introduce"), label(introduce, 3, "person"), act(introduce, "Contacts", 1, [2], [], [item(2, knows), pick(3, knows), req(identity, []), req(knows, [at(2)]), req(knows, [at(3)]), proved(identity, [], knows, [at(2)]), proved(knows, [v], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(found, "Found"), label(found, 2, "name"), act(found, "DAOs", 1, [], [], [req(identity, []), forb(member, [grp(1, 2)])]), label(admit, "Admit"), label(admit, 2, "person"), act(admit, "DAOs", 1, [2], [group(1, 3)], [atom(listed, [1, 3]), item(2, knows), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), req(knows, [at(2)]), forb(listed, [at(2), at(3)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(propose, "Propose"), label(propose, 3, "proposal"), act(propose, "DAOs", 1, [], [group(2, 4)], [req(identity, []), req(member, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(knows, [v], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(propose_own, "Propose own"), label(propose_own, 2, "proposal"), act(propose_own, "DAOs", 1, [], [group(1, 3)], [atom(listed, [1, 3]), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), forb(proposal, [at(2), at(1), grp(1, 3)])]), label(vote_for, "Vote for"), label(vote_for, 3, "proposal"), act(vote_for, "DAOs", 1, [4], [group(2, 5)], [item(3, proposal), item(4, proposal), req(identity, []), req(member, [grp(2, 5)]), req(proposal, [at(3), at(4), grp(2, 5)]), forb(voted, [at(3), at(4), grp(2, 5)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(vote_against, "Vote against"), label(vote_against, 3, "proposal"), act(vote_against, "DAOs", 1, [4], [group(2, 5)], [item(3, proposal), item(4, proposal), req(identity, []), req(member, [grp(2, 5)]), req(proposal, [at(3), at(4), grp(2, 5)]), forb(voted, [at(3), at(4), grp(2, 5)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(vote_own_for, "Vote own for"), label(vote_own_for, 2, "proposal"), act(vote_own_for, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(counted, [at(2), at(3), at(1), at(4)]), forb(voted, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(vote_own_against, "Vote own against"), label(vote_own_against, 2, "proposal"), act(vote_own_against, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(counted, [at(2), at(3), at(1), at(4)]), forb(voted, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(pass, "Pass"), label(pass, 2, "proposal"), act(pass, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(reject, "Reject"), label(reject, 2, "proposal"), act(reject, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(delegate, "Delegate"), label(delegate, 3, "delegate"), act(delegate, "Delegate", 1, [], [group(2, 4)], [pick(3, knows), req(identity, []), req(member, [grp(2, 4)]), req(knows, [at(3)]), forb(delegating, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(delegate_own, "Delegate own"), label(delegate_own, 2, "delegate"), act(delegate_own, "Delegate", 1, [], [group(1, 3)], [atom(listed, [1, 3]), pick(2, knows), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), req(listed, [at(2), at(3)]), req(knows, [at(2)]), forb(delegating, [grp(1, 3)])]), label(revoke, "Revoke"), label(revoke, 3, "delegate"), act(revoke, "Delegate", 1, [], [group(2, 4)], [pick(3, my_delegate), req(identity, []), req(member, [grp(2, 4)]), req(my_delegate, [at(3), grp(2, 4)]), req(delegating, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(revoke_own, "Revoke own"), label(revoke_own, 2, "delegate"), act(revoke_own, "Delegate", 1, [], [group(1, 3)], [pick(2, my_delegate), pick(2, delegation), item(3, delegation), req(identity, []), req(member, [grp(1, 3)]), req(my_delegate, [at(2), grp(1, 3)]), req(delegating, [grp(1, 3)]), req(delegation, [at(1), at(2), at(3)])])])
+Menu =::= social_menu([label(establish, "Establish"), act(establish, "Contacts", 1, [], [], [forb(identity, [])]), label(acquaint, "Acquaint"), label(acquaint, 2, "person"), act(acquaint, "Contacts", 1, [2], [], [req(identity, []), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), meeting(acquaint, 2), label(introduce, "Introduce"), label(introduce, 3, "person"), act(introduce, "Contacts", 1, [2], [], [item(2, knows), pick(3, knows), req(identity, []), req(knows, [at(2)]), req(knows, [at(3)]), proved(identity, [], knows, [at(2)]), proved(knows, [v], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(found, "Found"), label(found, 2, "name"), act(found, "DAOs", 1, [], [], [req(identity, []), forb(member, [grp(1, 2)])]), label(admit, "Admit"), label(admit, 2, "person"), act(admit, "DAOs", 1, [2], [group(1, 3)], [atom(listed, [1, 3]), item(2, knows), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), req(knows, [at(2)]), forb(listed, [at(2), at(3)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(propose, "Propose"), label(propose, 3, "proposal"), act(propose, "DAOs", 1, [], [group(2, 4)], [req(identity, []), req(member, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(knows, [v], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(propose_own, "Propose own"), label(propose_own, 2, "proposal"), act(propose_own, "DAOs", 1, [], [group(1, 3)], [atom(listed, [1, 3]), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), forb(proposal, [at(2), at(1), grp(1, 3)])]), label(vote_for, "Vote for"), label(vote_for, 3, "proposal"), act(vote_for, "DAOs", 1, [4], [group(2, 5)], [item(3, proposal), item(4, proposal), req(identity, []), req(member, [grp(2, 5)]), req(proposal, [at(3), at(4), grp(2, 5)]), forb(voted, [at(3), at(4), grp(2, 5)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(vote_against, "Vote against"), label(vote_against, 3, "proposal"), act(vote_against, "DAOs", 1, [4], [group(2, 5)], [item(3, proposal), item(4, proposal), req(identity, []), req(member, [grp(2, 5)]), req(proposal, [at(3), at(4), grp(2, 5)]), forb(voted, [at(3), at(4), grp(2, 5)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(vote_own_for, "Vote own for"), label(vote_own_for, 2, "proposal"), act(vote_own_for, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(counted, [at(2), at(3), at(1), at(4)]), forb(voted, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(vote_own_against, "Vote own against"), label(vote_own_against, 2, "proposal"), act(vote_own_against, "DAOs", 1, [3], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), item(3, proposal), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), forb(counted, [at(2), at(3), at(1), at(4)]), forb(voted, [at(2), at(3), grp(1, 4)]), forb(decided, [at(2), at(3), grp(1, 4)])]), label(pass, "Pass"), label(pass, 3, "proposal"), act(pass, "DAOs", 1, [], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), pick(3, proposal), atom(seats, [4, 0]), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), req(for_tally, [at(2), at(3), at(4), any]), req(seats, [at(4), any]), forb(decided, [at(2), at(3), grp(1, 4)]), forb(unseated, [at(4)])]), label(reject, "Reject"), label(reject, 3, "proposal"), act(reject, "DAOs", 1, [], [group(1, 4)], [atom(listed, [1, 4]), item(2, proposal), pick(3, proposal), atom(seats, [4, 0]), req(identity, []), req(member, [grp(1, 4)]), req(listed, [at(1), at(4)]), req(proposal, [at(2), at(3), grp(1, 4)]), req(against_tally, [at(2), at(3), at(4), any]), req(seats, [at(4), any]), forb(decided, [at(2), at(3), grp(1, 4)]), forb(unseated, [at(4)])]), label(delegate, "Delegate"), label(delegate, 3, "delegate"), act(delegate, "Delegate", 1, [], [group(2, 4)], [pick(3, knows), req(identity, []), req(member, [grp(2, 4)]), req(knows, [at(3)]), forb(delegating, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(delegate_own, "Delegate own"), label(delegate_own, 2, "delegate"), act(delegate_own, "Delegate", 1, [], [group(1, 3)], [atom(listed, [1, 3]), pick(2, knows), req(identity, []), req(member, [grp(1, 3)]), req(listed, [at(1), at(3)]), req(listed, [at(2), at(3)]), req(knows, [at(2)]), forb(delegating, [grp(1, 3)])]), label(revoke, "Revoke"), label(revoke, 3, "delegate"), act(revoke, "Delegate", 1, [], [group(2, 4)], [pick(3, my_delegate), req(identity, []), req(member, [grp(2, 4)]), req(my_delegate, [at(3), grp(2, 4)]), req(delegating, [grp(2, 4)]), proved(identity, [], knows, [at(2)]), proved(identity, [], listed, [at(2), any]), proved(identity, [], proposal, [any, at(2), any]), proved(identity, [], for_tally, [any, at(2), any, any]), proved(identity, [], against_tally, [any, at(2), any, any]), proved(identity, [], sent, [at(2), any, any, any]), proved(identity, [], yes_vote, [any, any, at(2), any]), proved(identity, [], counted, [any, any, at(2), any]), proved(identity, [], relayed, [at(2), any, any, any, any]), proved(identity, [], no_vote, [any, any, at(2), any]), proved(identity, [], told, [at(2), any, any, any]), proved(identity, [], delegation, [at(2), any, any])]), label(revoke_own, "Revoke own"), label(revoke_own, 2, "delegate"), act(revoke_own, "Delegate", 1, [], [group(1, 3)], [pick(2, my_delegate), pick(2, delegation), item(3, delegation), req(identity, []), req(member, [grp(1, 3)]), req(my_delegate, [at(2), grp(1, 3)]), req(delegating, [grp(1, 3)]), req(delegation, [at(1), at(2), at(3)])])])
 .
 
 %% The atoms of the contract at their argument types: a machine state is a list of them, in the view the agent writes, Output ::= view(List(Atom), List(Key), List(Approved)), and the agent writes each atom it holds, g(Name, Vals), as atom_of gives it (vGLP, Section 5.4, "The compilation"); the day, today(d), is no atom of the machine state the view shows (Section 5.4, "Act schemas as local specifications").
@@ -108,19 +122,33 @@ member(CName)
 ;
 listed(Peer, Speech)
 ;
+seats(Speech, Integer)
+;
+unseated(Speech)
+;
 proposal(Speech, Peer, CName)
+;
+for_tally(Speech, Peer, Speech, Integer)
+;
+against_tally(Speech, Peer, Speech, Integer)
 ;
 sent(Peer, Speech, Peer, Speech)
 ;
 voted(Speech, Peer, CName)
 ;
-yes_vote(Speech, Peer, Peer, Speech)
+yes_vote(Speech, Peer, Peer, CName)
 ;
 counted(Speech, Peer, Peer, Speech)
 ;
+for_ballot(Speech, Peer, Speech)
+;
 decided(Speech, Peer, CName)
 ;
-no_vote(Speech, Peer, Peer, Speech)
+relayed(Peer, Speech, Peer, Peer, Speech)
+;
+no_vote(Speech, Peer, Peer, CName)
+;
+against_ballot(Speech, Peer, Speech)
 ;
 passed_proposal(Speech, Peer, CName)
 ;
@@ -133,6 +161,8 @@ my_delegate(Peer, CName)
 delegating(CName)
 ;
 delegation(Peer, Peer, Speech)
+;
+followed(Speech, Peer, Peer, Peer, Speech)
 .
 
 procedure atom_of(GAtom?, Shown).
@@ -144,19 +174,33 @@ atom_of(g(member, [c(V1)]), shown(member(V1?)))
 .
 atom_of(g(listed, [p(V1), s(V2)]), shown(listed(V1?, V2?)))
 .
+atom_of(g(seats, [s(V1), n(V2)]), shown(seats(V1?, V2?)))
+.
+atom_of(g(unseated, [s(V1)]), shown(unseated(V1?)))
+.
 atom_of(g(proposal, [s(V1), p(V2), c(V3)]), shown(proposal(V1?, V2?, V3?)))
+.
+atom_of(g(for_tally, [s(V1), p(V2), s(V3), n(V4)]), shown(for_tally(V1?, V2?, V3?, V4?)))
+.
+atom_of(g(against_tally, [s(V1), p(V2), s(V3), n(V4)]), shown(against_tally(V1?, V2?, V3?, V4?)))
 .
 atom_of(g(sent, [p(V1), s(V2), p(V3), s(V4)]), shown(sent(V1?, V2?, V3?, V4?)))
 .
 atom_of(g(voted, [s(V1), p(V2), c(V3)]), shown(voted(V1?, V2?, V3?)))
 .
-atom_of(g(yes_vote, [s(V1), p(V2), p(V3), s(V4)]), shown(yes_vote(V1?, V2?, V3?, V4?)))
+atom_of(g(yes_vote, [s(V1), p(V2), p(V3), c(V4)]), shown(yes_vote(V1?, V2?, V3?, V4?)))
 .
 atom_of(g(counted, [s(V1), p(V2), p(V3), s(V4)]), shown(counted(V1?, V2?, V3?, V4?)))
 .
+atom_of(g(for_ballot, [s(V1), p(V2), s(V3)]), shown(for_ballot(V1?, V2?, V3?)))
+.
 atom_of(g(decided, [s(V1), p(V2), c(V3)]), shown(decided(V1?, V2?, V3?)))
 .
-atom_of(g(no_vote, [s(V1), p(V2), p(V3), s(V4)]), shown(no_vote(V1?, V2?, V3?, V4?)))
+atom_of(g(relayed, [p(V1), s(V2), p(V3), p(V4), s(V5)]), shown(relayed(V1?, V2?, V3?, V4?, V5?)))
+.
+atom_of(g(no_vote, [s(V1), p(V2), p(V3), c(V4)]), shown(no_vote(V1?, V2?, V3?, V4?)))
+.
+atom_of(g(against_ballot, [s(V1), p(V2), s(V3)]), shown(against_ballot(V1?, V2?, V3?)))
 .
 atom_of(g(passed_proposal, [s(V1), p(V2), c(V3)]), shown(passed_proposal(V1?, V2?, V3?)))
 .
@@ -170,10 +214,12 @@ atom_of(g(delegating, [c(V1)]), shown(delegating(V1?)))
 .
 atom_of(g(delegation, [p(V1), p(V2), s(V3)]), shown(delegation(V1?, V2?, V3?)))
 .
+atom_of(g(followed, [s(V1), p(V2), p(V3), p(V4), s(V5)]), shown(followed(V1?, V2?, V3?, V4?, V5?)))
+.
 atom_of(_, unshown) :- otherwise | true.
 
 procedure contract_schemas(Schemas).
-contract_schemas([schema(establish, [], [rs(guarded, [atom(identity, [])], [], [], [atom(identity, [])])]), schema(acquaint, [], [rs(guarded, [atom(knows, [role(2)])], [], [atom(identity, [])], []), rs(guarded, [atom(knows, [role(1)])], [], [atom(identity, [])], [])]), schema(introduce, [pvar(c)], [rs(guarded, [], [], [atom(identity, []), atom(knows, [role(2)]), atom(knows, [pvar(c)])], []), rs(guarded, [atom(knows, [pvar(c)])], [], [atom(identity, []), atom(knows, [role(1)])], [])]), schema(found, [svar(n)], [rs(guarded, [atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]), schema(admit, [svar(n)], [rs(guarded, [atom(listed, [role(2), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], [atom(listed, [role(2), svar(n)])]), rs(guarded, [atom(member, [nterm(ext(own(1), n))])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]), schema(propose, [svar(x), svar(n)], [rs(guarded, [], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(knows, [role(1)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]), schema(propose_own, [svar(x), svar(n)], [rs(guarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])])]), schema(deliver_proposal, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)]), atom(knows, [pvar(o)])], [atom(sent, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(deliver_own_proposal, [svar(x), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(sent, [role(2), svar(x), role(1), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(vote_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]), schema(vote_own_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(yes_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(vote_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]), schema(vote_own_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(no_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(pass, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(deliver_pass, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(reject, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(deliver_reject, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(delegate, [pvar(c), svar(n)], [rs(guarded, [atom(my_delegate, [pvar(c), nterm(ext(own(2), n))]), atom(delegating, [nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(knows, [pvar(c)])], [atom(delegating, [nterm(ext(own(2), n))])]), rs(unguarded, [atom(delegation, [role(1), pvar(c), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(listed, [pvar(c), svar(n)])], [])]), schema(revoke, [pvar(c), svar(n)], [rs(guarded, [], [atom(my_delegate, [pvar(c), nterm(ext(own(2), n))]), atom(delegating, [nterm(ext(own(2), n))])], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [], [atom(delegation, [role(1), pvar(c), svar(n)])], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], [])]), schema(delegate_own, [pvar(c), svar(n)], [rs(guarded, [atom(my_delegate, [pvar(c), nterm(ext(own(1), n))]), atom(delegating, [nterm(ext(own(1), n))]), atom(delegation, [role(1), pvar(c), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(listed, [pvar(c), svar(n)]), atom(knows, [pvar(c)])], [atom(delegating, [nterm(ext(own(1), n))])])]), schema(revoke_own, [pvar(c), svar(n)], [rs(guarded, [], [atom(my_delegate, [pvar(c), nterm(ext(own(1), n))]), atom(delegating, [nterm(ext(own(1), n))]), atom(delegation, [role(1), pvar(c), svar(n)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])])])
+contract_schemas([schema(establish, [], [rs(guarded, [atom(identity, [])], [], [], [atom(identity, [])])]), schema(acquaint, [], [rs(guarded, [atom(knows, [role(2)])], [], [atom(identity, [])], []), rs(guarded, [atom(knows, [role(1)])], [], [atom(identity, [])], [])]), schema(introduce, [pvar(c)], [rs(guarded, [], [], [atom(identity, []), atom(knows, [role(2)]), atom(knows, [pvar(c)])], []), rs(guarded, [atom(knows, [pvar(c)])], [], [atom(identity, []), atom(knows, [role(1)])], [])]), schema(found, [svar(n)], [rs(guarded, [atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(seats, [svar(n), num(1)])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]), schema(admit, [svar(n)], [rs(guarded, [atom(listed, [role(2), svar(n)]), atom(unseated, [svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], [atom(listed, [role(2), svar(n)])]), rs(guarded, [atom(member, [nterm(ext(own(1), n))])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]), schema(seat, [svar(n), num(m1)], [rs(unguarded, [atom(seats, [svar(n), num(m1)])], [atom(unseated, [svar(n)]), atom(seats, [svar(n), num(m)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]), schema(propose, [svar(x), svar(n)], [rs(guarded, [], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(knows, [role(1)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]), schema(propose_own, [svar(x), svar(n)], [rs(guarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])])]), schema(deliver_proposal, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)]), atom(knows, [pvar(o)])], [atom(sent, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(deliver_own_proposal, [svar(x), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(sent, [role(2), svar(x), role(1), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(vote_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), role(1), nterm(ext(own(2), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]), schema(vote_own_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(yes_vote, [svar(x), pvar(o), role(1), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(tally_for, [svar(x), pvar(o), svar(n), num(a1)], [rs(unguarded, [atom(for_tally, [svar(x), pvar(o), svar(n), num(a1)])], [atom(for_ballot, [svar(x), pvar(o), svar(n)]), atom(for_tally, [svar(x), pvar(o), svar(n), num(a)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]), schema(deliver_yes_vote, [svar(x), pvar(o), pvar(v), svar(n)], [rs(unguarded, [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(yes_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(vote_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), role(1), nterm(ext(own(2), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]), schema(vote_own_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(no_vote, [svar(x), pvar(o), role(1), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(tally_against, [svar(x), pvar(o), svar(n), num(a1)], [rs(unguarded, [atom(against_tally, [svar(x), pvar(o), svar(n), num(a1)])], [atom(against_ballot, [svar(x), pvar(o), svar(n)]), atom(against_tally, [svar(x), pvar(o), svar(n), num(a)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]), schema(deliver_no_vote, [svar(x), pvar(o), pvar(v), svar(n)], [rs(unguarded, [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(no_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(pass, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(for_tally, [svar(x), pvar(o), svar(n), num(c)]), atom(seats, [svar(n), num(m)])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(unseated, [svar(n)])])]), schema(deliver_pass, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(reject, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(against_tally, [svar(x), pvar(o), svar(n), num(c)]), atom(seats, [svar(n), num(m)])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(unseated, [svar(n)])])]), schema(deliver_reject, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(delegate, [pvar(c), svar(n)], [rs(guarded, [atom(my_delegate, [pvar(c), nterm(ext(own(2), n))]), atom(delegating, [nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(knows, [pvar(c)])], [atom(delegating, [nterm(ext(own(2), n))])]), rs(unguarded, [atom(delegation, [role(1), pvar(c), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(listed, [pvar(c), svar(n)])], [])]), schema(revoke, [pvar(c), svar(n)], [rs(guarded, [], [atom(my_delegate, [pvar(c), nterm(ext(own(2), n))]), atom(delegating, [nterm(ext(own(2), n))])], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [], [atom(delegation, [role(1), pvar(c), svar(n)])], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], [])]), schema(delegate_own, [pvar(c), svar(n)], [rs(guarded, [atom(my_delegate, [pvar(c), nterm(ext(own(1), n))]), atom(delegating, [nterm(ext(own(1), n))]), atom(delegation, [role(1), pvar(c), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(listed, [pvar(c), svar(n)]), atom(knows, [pvar(c)])], [atom(delegating, [nterm(ext(own(1), n))])])]), schema(revoke_own, [pvar(c), svar(n)], [rs(guarded, [], [atom(my_delegate, [pvar(c), nterm(ext(own(1), n))]), atom(delegating, [nterm(ext(own(1), n))]), atom(delegation, [role(1), pvar(c), svar(n)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]), schema(count_for, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)], [rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), pvar(b), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(followed, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [pvar(b), svar(n)]), atom(delegation, [pvar(b), pvar(c), svar(n)]), atom(yes_vote, [svar(x), pvar(o), pvar(c), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]), schema(count_against, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)], [rs(unguarded, [atom(no_vote, [svar(x), pvar(o), pvar(b), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(followed, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [pvar(b), svar(n)]), atom(delegation, [pvar(b), pvar(c), svar(n)]), atom(no_vote, [svar(x), pvar(o), pvar(c), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])])])
 .
 
 procedure schema_entry(Constant?, Schema).
@@ -183,31 +229,41 @@ schema_entry(acquaint, schema(acquaint, [], [rs(guarded, [atom(knows, [role(2)])
 .
 schema_entry(introduce, schema(introduce, [pvar(c)], [rs(guarded, [], [], [atom(identity, []), atom(knows, [role(2)]), atom(knows, [pvar(c)])], []), rs(guarded, [atom(knows, [pvar(c)])], [], [atom(identity, []), atom(knows, [role(1)])], [])]))
 .
-schema_entry(found, schema(found, [svar(n)], [rs(guarded, [atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]))
+schema_entry(found, schema(found, [svar(n)], [rs(guarded, [atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(seats, [svar(n), num(1)])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]))
 .
-schema_entry(admit, schema(admit, [svar(n)], [rs(guarded, [atom(listed, [role(2), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], [atom(listed, [role(2), svar(n)])]), rs(guarded, [atom(member, [nterm(ext(own(1), n))])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]))
+schema_entry(admit, schema(admit, [svar(n)], [rs(guarded, [atom(listed, [role(2), svar(n)]), atom(unseated, [svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(knows, [role(2)])], [atom(listed, [role(2), svar(n)])]), rs(guarded, [atom(member, [nterm(ext(own(1), n))])], [], [atom(identity, [])], [atom(member, [nterm(ext(own(1), n))])])]))
 .
-schema_entry(propose, schema(propose, [svar(x), svar(n)], [rs(guarded, [], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(knows, [role(1)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]))
+schema_entry(seat, schema(seat, [svar(n), num(m1)], [rs(unguarded, [atom(seats, [svar(n), num(m1)])], [atom(unseated, [svar(n)]), atom(seats, [svar(n), num(m)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]))
 .
-schema_entry(propose_own, schema(propose_own, [svar(x), svar(n)], [rs(guarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])])]))
+schema_entry(propose, schema(propose, [svar(x), svar(n)], [rs(guarded, [], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))])], []), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(knows, [role(1)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(2), n))])])]))
+.
+schema_entry(propose_own, schema(propose_own, [svar(x), svar(n)], [rs(guarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(for_tally, [svar(x), role(1), svar(n), num(0)]), atom(against_tally, [svar(x), role(1), svar(n), num(0)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])])]))
 .
 schema_entry(deliver_proposal, schema(deliver_proposal, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)]), atom(knows, [pvar(o)])], [atom(sent, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
 schema_entry(deliver_own_proposal, schema(deliver_own_proposal, [svar(x), svar(n)], [rs(unguarded, [atom(sent, [role(2), svar(x), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(sent, [role(2), svar(x), role(1), svar(n)])]), rs(unguarded, [atom(proposal, [svar(x), role(1), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
-schema_entry(vote_for, schema(vote_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]))
+schema_entry(vote_for, schema(vote_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), role(1), nterm(ext(own(2), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]))
 .
-schema_entry(vote_own_for, schema(vote_own_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(yes_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+schema_entry(vote_own_for, schema(vote_own_for, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(yes_vote, [svar(x), pvar(o), role(1), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
 .
-schema_entry(vote_against, schema(vote_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]))
+schema_entry(tally_for, schema(tally_for, [svar(x), pvar(o), svar(n), num(a1)], [rs(unguarded, [atom(for_tally, [svar(x), pvar(o), svar(n), num(a1)])], [atom(for_ballot, [svar(x), pvar(o), svar(n)]), atom(for_tally, [svar(x), pvar(o), svar(n), num(a)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]))
 .
-schema_entry(vote_own_against, schema(vote_own_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(no_vote, [svar(x), pvar(o), role(1), svar(n)]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+schema_entry(deliver_yes_vote, schema(deliver_yes_vote, [svar(x), pvar(o), pvar(v), svar(n)], [rs(unguarded, [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(yes_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])]), rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
-schema_entry(pass, schema(pass, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+schema_entry(vote_against, schema(vote_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(voted, [svar(x), pvar(o), nterm(ext(own(2), n))])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), role(1), nterm(ext(own(2), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(2), n))]), atom(listed, [role(2), svar(n)]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(2), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(2), n))])])]))
+.
+schema_entry(vote_own_against, schema(vote_own_against, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(no_vote, [svar(x), pvar(o), role(1), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), role(1), svar(n)]), atom(voted, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+.
+schema_entry(tally_against, schema(tally_against, [svar(x), pvar(o), svar(n), num(a1)], [rs(unguarded, [atom(against_tally, [svar(x), pvar(o), svar(n), num(a1)])], [atom(against_ballot, [svar(x), pvar(o), svar(n)]), atom(against_tally, [svar(x), pvar(o), svar(n), num(a)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)])], [])]))
+.
+schema_entry(deliver_no_vote, schema(deliver_no_vote, [svar(x), pvar(o), pvar(v), svar(n)], [rs(unguarded, [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(no_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(relayed, [role(2), svar(x), pvar(o), pvar(v), svar(n)])]), rs(unguarded, [atom(no_vote, [svar(x), pvar(o), pvar(v), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
+.
+schema_entry(pass, schema(pass, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(for_tally, [svar(x), pvar(o), svar(n), num(c)]), atom(seats, [svar(n), num(m)])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(unseated, [svar(n)])])]))
 .
 schema_entry(deliver_pass, schema(deliver_pass, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(passed_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
-schema_entry(reject, schema(reject, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+schema_entry(reject, schema(reject, [svar(x), pvar(o), svar(n)], [rs(guarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(against_tally, [svar(x), pvar(o), svar(n), num(c)]), atom(seats, [svar(n), num(m)])], [atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(unseated, [svar(n)])])]))
 .
 schema_entry(deliver_reject, schema(deliver_reject, [svar(x), pvar(o), svar(n)], [rs(unguarded, [atom(told, [role(2), svar(x), pvar(o), svar(n)])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [role(2), svar(n)])], [atom(told, [role(2), svar(x), pvar(o), svar(n)])]), rs(unguarded, [atom(rejected_proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
@@ -219,9 +275,23 @@ schema_entry(delegate_own, schema(delegate_own, [pvar(c), svar(n)], [rs(guarded,
 .
 schema_entry(revoke_own, schema(revoke_own, [pvar(c), svar(n)], [rs(guarded, [], [atom(my_delegate, [pvar(c), nterm(ext(own(1), n))]), atom(delegating, [nterm(ext(own(1), n))]), atom(delegation, [role(1), pvar(c), svar(n)])], [atom(identity, []), atom(member, [nterm(ext(own(1), n))])], [])]))
 .
+schema_entry(count_for, schema(count_for, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)], [rs(unguarded, [atom(yes_vote, [svar(x), pvar(o), pvar(b), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(followed, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)]), times(num(2), atom(for_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [pvar(b), svar(n)]), atom(delegation, [pvar(b), pvar(c), svar(n)]), atom(yes_vote, [svar(x), pvar(o), pvar(c), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+.
+schema_entry(count_against, schema(count_against, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)], [rs(unguarded, [atom(no_vote, [svar(x), pvar(o), pvar(b), nterm(ext(own(1), n))]), atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(followed, [svar(x), pvar(o), pvar(b), pvar(c), svar(n)]), times(num(2), atom(against_ballot, [svar(x), pvar(o), svar(n)]))], [], [atom(identity, []), atom(member, [nterm(ext(own(1), n))]), atom(listed, [role(1), svar(n)]), atom(proposal, [svar(x), pvar(o), nterm(ext(own(1), n))]), atom(listed, [pvar(b), svar(n)]), atom(delegation, [pvar(b), pvar(c), svar(n)]), atom(no_vote, [svar(x), pvar(o), pvar(c), nterm(ext(own(1), n))])], [atom(counted, [svar(x), pvar(o), pvar(b), svar(n)]), atom(decided, [svar(x), pvar(o), nterm(ext(own(1), n))])])]))
+.
 schema_entry(Nm, schema(Nm?, [], [])) :- otherwise | true.
 
 procedure schema_numeric(Constant?, Numeric).
+schema_numeric(seat, numeric(succ(num(m), num(m1)), [num(m)], at(1)))
+.
+schema_numeric(tally_for, numeric(succ(num(a), num(a1)), [num(a)], at(1)))
+.
+schema_numeric(tally_against, numeric(succ(num(a), num(a1)), [num(a)], at(1)))
+.
+schema_numeric(pass, numeric(gt(num(c), num(m)), [num(c), num(m)], at(1)))
+.
+schema_numeric(reject, numeric(gt(num(c), num(m)), [num(c), num(m)], at(1)))
+.
 schema_numeric(_, numeric(true, [], every)) :- otherwise | true.
 
 procedure reflexive_preds(Preds).
@@ -243,6 +313,8 @@ binding_of(found(V1, V2), found, [b(role(1), p(V1?)), b(svar(n), s(V2?))])
 .
 binding_of(admit(V1, V2, V3), admit, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(n), s(V3?))])
 .
+binding_of(seat(V1, V2, V3), seat, [b(role(1), p(V1?)), b(svar(n), s(V2?)), b(num(m1), n(V3?)), b(num(m), lv(seat, m))])
+.
 binding_of(propose(V1, V2, V3, V4), propose, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(svar(n), s(V4?))])
 .
 binding_of(propose_own(V1, V2, V3), propose_own, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(svar(n), s(V3?))])
@@ -255,15 +327,23 @@ binding_of(vote_for(V1, V2, V3, V4, V5), vote_for, [b(role(1), p(V1?)), b(role(2
 .
 binding_of(vote_own_for(V1, V2, V3, V4), vote_own_for, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?))])
 .
+binding_of(tally_for(V1, V2, V3, V4, V5), tally_for, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?)), b(num(a1), n(V5?)), b(num(a), lv(tally_for, a))])
+.
+binding_of(deliver_yes_vote(V1, V2, V3, V4, V5, V6), deliver_yes_vote, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(pvar(o), p(V4?)), b(pvar(v), p(V5?)), b(svar(n), s(V6?))])
+.
 binding_of(vote_against(V1, V2, V3, V4, V5), vote_against, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(pvar(o), p(V4?)), b(svar(n), s(V5?))])
 .
 binding_of(vote_own_against(V1, V2, V3, V4), vote_own_against, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?))])
 .
-binding_of(pass(V1, V2, V3, V4), pass, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?))])
+binding_of(tally_against(V1, V2, V3, V4, V5), tally_against, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?)), b(num(a1), n(V5?)), b(num(a), lv(tally_against, a))])
+.
+binding_of(deliver_no_vote(V1, V2, V3, V4, V5, V6), deliver_no_vote, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(pvar(o), p(V4?)), b(pvar(v), p(V5?)), b(svar(n), s(V6?))])
+.
+binding_of(pass(V1, V2, V3, V4), pass, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?)), b(num(c), lv(pass, c)), b(num(m), lv(pass, m))])
 .
 binding_of(deliver_pass(V1, V2, V3, V4, V5), deliver_pass, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(pvar(o), p(V4?)), b(svar(n), s(V5?))])
 .
-binding_of(reject(V1, V2, V3, V4), reject, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?))])
+binding_of(reject(V1, V2, V3, V4), reject, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(svar(n), s(V4?)), b(num(c), lv(reject, c)), b(num(m), lv(reject, m))])
 .
 binding_of(deliver_reject(V1, V2, V3, V4, V5), deliver_reject, [b(role(1), p(V1?)), b(role(2), p(V2?)), b(svar(x), s(V3?)), b(pvar(o), p(V4?)), b(svar(n), s(V5?))])
 .
@@ -274,6 +354,10 @@ binding_of(revoke(V1, V2, V3, V4), revoke, [b(role(1), p(V1?)), b(role(2), p(V2?
 binding_of(delegate_own(V1, V2, V3), delegate_own, [b(role(1), p(V1?)), b(pvar(c), p(V2?)), b(svar(n), s(V3?))])
 .
 binding_of(revoke_own(V1, V2, V3), revoke_own, [b(role(1), p(V1?)), b(pvar(c), p(V2?)), b(svar(n), s(V3?))])
+.
+binding_of(count_for(V1, V2, V3, V4, V5, V6), count_for, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(pvar(b), p(V4?)), b(pvar(c), p(V5?)), b(svar(n), s(V6?))])
+.
+binding_of(count_against(V1, V2, V3, V4, V5, V6), count_against, [b(role(1), p(V1?)), b(svar(x), s(V2?)), b(pvar(o), p(V3?)), b(pvar(b), p(V4?)), b(pvar(c), p(V5?)), b(svar(n), s(V6?))])
 .
 
 procedure class_of(Constant?, Binding?, Peer?, Class).
@@ -328,6 +412,18 @@ val_peer(role(1), B?, D?, V1)
 val_peer(role(2), B?, D?, V2)
 ,
 val_speech(svar(n), B?, D?, V3)
+.
+class_of(seat, B, D, seat(V1?, V2?, V3?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_speech(svar(n), B?, D?, V2)
+,
+val_num(num(m1), B?, V3)
 .
 class_of(propose, B, D, propose(V1?, V2?, V3?, V4?))
 :-
@@ -415,6 +511,40 @@ val_peer(pvar(o), B?, D?, V3)
 ,
 val_speech(svar(n), B?, D?, V4)
 .
+class_of(tally_for, B, D, tally_for(V1?, V2?, V3?, V4?, V5?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_speech(svar(x), B?, D?, V2)
+,
+val_peer(pvar(o), B?, D?, V3)
+,
+val_speech(svar(n), B?, D?, V4)
+,
+val_num(num(a1), B?, V5)
+.
+class_of(deliver_yes_vote, B, D, deliver_yes_vote(V1?, V2?, V3?, V4?, V5?, V6?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_peer(role(2), B?, D?, V2)
+,
+val_speech(svar(x), B?, D?, V3)
+,
+val_peer(pvar(o), B?, D?, V4)
+,
+val_peer(pvar(v), B?, D?, V5)
+,
+val_speech(svar(n), B?, D?, V6)
+.
 class_of(vote_against, B, D, vote_against(V1?, V2?, V3?, V4?, V5?))
 :-
 ground(B?)
@@ -444,6 +574,40 @@ val_speech(svar(x), B?, D?, V2)
 val_peer(pvar(o), B?, D?, V3)
 ,
 val_speech(svar(n), B?, D?, V4)
+.
+class_of(tally_against, B, D, tally_against(V1?, V2?, V3?, V4?, V5?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_speech(svar(x), B?, D?, V2)
+,
+val_peer(pvar(o), B?, D?, V3)
+,
+val_speech(svar(n), B?, D?, V4)
+,
+val_num(num(a1), B?, V5)
+.
+class_of(deliver_no_vote, B, D, deliver_no_vote(V1?, V2?, V3?, V4?, V5?, V6?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_peer(role(2), B?, D?, V2)
+,
+val_speech(svar(x), B?, D?, V3)
+,
+val_peer(pvar(o), B?, D?, V4)
+,
+val_peer(pvar(v), B?, D?, V5)
+,
+val_speech(svar(n), B?, D?, V6)
 .
 class_of(pass, B, D, pass(V1?, V2?, V3?, V4?))
 :-
@@ -556,6 +720,42 @@ val_peer(role(1), B?, D?, V1)
 val_peer(pvar(c), B?, D?, V2)
 ,
 val_speech(svar(n), B?, D?, V3)
+.
+class_of(count_for, B, D, count_for(V1?, V2?, V3?, V4?, V5?, V6?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_speech(svar(x), B?, D?, V2)
+,
+val_peer(pvar(o), B?, D?, V3)
+,
+val_peer(pvar(b), B?, D?, V4)
+,
+val_peer(pvar(c), B?, D?, V5)
+,
+val_speech(svar(n), B?, D?, V6)
+.
+class_of(count_against, B, D, count_against(V1?, V2?, V3?, V4?, V5?, V6?))
+:-
+ground(B?)
+,
+ground(D?)
+|
+val_peer(role(1), B?, D?, V1)
+,
+val_speech(svar(x), B?, D?, V2)
+,
+val_peer(pvar(o), B?, D?, V3)
+,
+val_peer(pvar(b), B?, D?, V4)
+,
+val_peer(pvar(c), B?, D?, V5)
+,
+val_speech(svar(n), B?, D?, V6)
 .
 
 procedure name_class(Proposal?, GAtoms?, Class).

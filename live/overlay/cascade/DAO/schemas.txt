@@ -10,18 +10,21 @@ introduce(Alice?, Bob?; c) :
     at Bob: identity, knows(Alice), +knows(c)
 
 found(Alice?; n) :
-    at Alice: identity, not member(<Alice>.n), +member(<Alice>.n), +listed(Alice, n)
+    at Alice: identity, not member(<Alice>.n), +member(<Alice>.n), +listed(Alice, n), +seats(n, 1)
 
 admit(Alice?, Bob?; n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), knows(Bob), not listed(Bob, n), +listed(Bob, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), knows(Bob), not listed(Bob, n), +listed(Bob, n), +unseated(n)
     at Bob: identity, not member(<Alice>.n), +member(<Alice>.n)
+
+seat(Alice; n, m, m1) | m1 = m + 1 :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), +seats(n, m1), -unseated(n), -seats(n, m)
 
 propose(Bob?, Alice; x, n) :
     at Bob: identity, member(<Alice>.n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), knows(Bob), not proposal(x, Bob, <Alice>.n), +proposal(x, Bob, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), knows(Bob), not proposal(x, Bob, <Alice>.n), +proposal(x, Bob, <Alice>.n), +for_tally(x, Bob, n, 0), +against_tally(x, Bob, n, 0)
 
 propose_own(Alice?; x, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), not proposal(x, Alice, <Alice>.n), +proposal(x, Alice, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), not proposal(x, Alice, <Alice>.n), +proposal(x, Alice, <Alice>.n), +for_tally(x, Alice, n, 0), +against_tally(x, Alice, n, 0)
 
 deliver_proposal(Alice, Bob; x, o, n) :
     at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), listed(Bob, n), knows(o), not sent(Bob, x, o, n), +sent(Bob, x, o, n)
@@ -33,27 +36,41 @@ deliver_own_proposal(Alice, Bob; x, n) :
 
 vote_for(Bob?, Alice; x, o, n) :
     at Bob: identity, member(<Alice>.n), proposal(x, o, <Alice>.n), not voted(x, o, <Alice>.n), +voted(x, o, <Alice>.n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Bob, <Alice>.n), +counted(x, o, Bob, n), +2.for_ballot(x, o, n)
 
 vote_own_for(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +yes_vote(x, o, Alice, <Alice>.n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n), +2.for_ballot(x, o, n)
+
+tally_for(Alice; x, o, n, a, a1) | a1 = a + 1 :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), +for_tally(x, o, n, a1), -for_ballot(x, o, n), -for_tally(x, o, n, a)
+
+deliver_yes_vote(Alice, Bob; x, o, v, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), yes_vote(x, o, v, <Alice>.n), listed(Bob, n), not relayed(Bob, x, o, v, n), +relayed(Bob, x, o, v, n)
+    at Bob: identity, member(<Alice>.n), +yes_vote(x, o, v, <Alice>.n)
 
 vote_against(Bob?, Alice; x, o, n) :
     at Bob: identity, member(<Alice>.n), proposal(x, o, <Alice>.n), not voted(x, o, <Alice>.n), +voted(x, o, <Alice>.n)
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +no_vote(x, o, Bob, n), +counted(x, o, Bob, n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), listed(Bob, n), proposal(x, o, <Alice>.n), not counted(x, o, Bob, n), not decided(x, o, <Alice>.n), +no_vote(x, o, Bob, <Alice>.n), +counted(x, o, Bob, n), +2.against_ballot(x, o, n)
 
 vote_own_against(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +no_vote(x, o, Alice, n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n)
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not counted(x, o, Alice, n), not voted(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +no_vote(x, o, Alice, <Alice>.n), +counted(x, o, Alice, n), +voted(x, o, <Alice>.n), +2.against_ballot(x, o, n)
 
-pass(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +passed_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
+tally_against(Alice; x, o, n, a, a1) | a1 = a + 1 :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), +against_tally(x, o, n, a1), -against_ballot(x, o, n), -against_tally(x, o, n, a)
+
+deliver_no_vote(Alice, Bob; x, o, v, n) :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), no_vote(x, o, v, <Alice>.n), listed(Bob, n), not relayed(Bob, x, o, v, n), +relayed(Bob, x, o, v, n)
+    at Bob: identity, member(<Alice>.n), +no_vote(x, o, v, <Alice>.n)
+
+pass(Alice?; x, o, n, c, m) | c > m :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), for_tally(x, o, n, c), seats(n, m), not decided(x, o, <Alice>.n), not unseated(n), +passed_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 deliver_pass(Alice, Bob; x, o, n) :
     at Alice: identity, member(<Alice>.n), listed(Alice, n), passed_proposal(x, o, <Alice>.n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)
     at Bob: identity, member(<Alice>.n), +passed_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
-reject(Alice?; x, o, n) :
-    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), not decided(x, o, <Alice>.n), +rejected_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
+reject(Alice?; x, o, n, c, m) | c > m :
+    at Alice: identity, member(<Alice>.n), listed(Alice, n), proposal(x, o, <Alice>.n), against_tally(x, o, n, c), seats(n, m), not decided(x, o, <Alice>.n), not unseated(n), +rejected_proposal(x, o, <Alice>.n), +decided(x, o, <Alice>.n)
 
 deliver_reject(Alice, Bob; x, o, n) :
     at Alice: identity, member(<Alice>.n), listed(Alice, n), rejected_proposal(x, o, <Alice>.n), listed(Bob, n), not told(Bob, x, o, n), +told(Bob, x, o, n)

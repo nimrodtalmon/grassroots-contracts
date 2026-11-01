@@ -217,11 +217,11 @@ c = Contract('LDAO', 'Liquid DAO', 'ldao', ['DAO'],
     'Alice and Bob are persons.  LDAO extends DAO.',
     [('■', 'Delegating', 'A member of a DAO, the steward included, may make another member, whom they know, their delegate in it, one at a time; the steward records the delegation.'),
      ('■', 'Revoking', 'A member may revoke their delegation at any time; the steward erases it.'),
-     ('○', 'Counting', 'In deciding a proposal, the steward counts a member who did not vote on it as voting as their delegate did, or, if the delegate did not vote either, as the delegate\'s delegate did, and so on; a member whose chain of delegates ends with no vote, or comes back to them, is not counted as voting.')],
+     ('■', 'Counting', 'Once the delegate of a member who has not voted on a proposal has a vote on it counted, the steward counts the member as voting the same way, and the member cannot vote on it any more; so a vote passes down a chain of delegates, and a member whose chain ends with no vote, or runs into a cycle, is not counted.')],
     ['Delegate: my delegate in each DAO.', 'Delegations: the delegations Alice records.',
      'Delegating: Bob [Delegate] <delegate>', '  Alice [Delegate own] <delegate>',
      'Revoking: Bob [Revoke] <delegate>', '  Alice [Revoke own] <delegate>'],
-    'delegate, delegation; my_delegate(c, <a>.n) at the member, a the steward, delegation(m, c, n) at the steward.')
+    'delegate, delegation; my_delegate(c, <a>.n) at the member, a the steward, delegation(m, c, n) at the steward; a vote counted through a delegate is recorded as the member\'s own, yes_vote or no_vote, with its ballots, and followed(x, o, b, c, n) at the steward names the delegate c whose vote b followed.')
 c.schema('delegate', ['Bob', 'Alice'], ['p:c', 's:n'],
     [('guarded', ['my_delegate(c, <2>.n)', 'delegating(<2>.n)'], [], [ID, 'member(<2>.n)', 'knows(c)'], ['delegating(<2>.n)']),
      ('unguarded', ['delegation(R1, c, n)'], [], [ID, 'member(<2>.n)', 'listed(R2, n)', 'listed(R1, n)', 'listed(c, n)'], [])],
@@ -236,6 +236,12 @@ c.schema('delegate_own', ['Alice'], ['p:c', 's:n'],
 c.schema('revoke_own', ['Alice'], ['p:c', 's:n'],
     [('guarded', [], ['my_delegate(c, <1>.n)', 'delegating(<1>.n)', 'delegation(R1, c, n)'], [ID, 'member(<1>.n)'], [])],
     comment='LDAO:2, the steward revokes.')
+for side, vote, ballot in (('for', 'yes_vote', 'for_ballot'), ('against', 'no_vote', 'against_ballot')):
+    c.schema(f'count_{side}', ['Alice'], ['s:x', 'p:o', 'p:b', 'p:c', 's:n'],
+        [('unguarded', [f'{vote}(x, o, b, <1>.n)', 'counted(x, o, b, n)', 'followed(x, o, b, c, n)', f'2*{ballot}(x, o, n)'], [],
+          [ID, 'member(<1>.n)', 'listed(R1, n)', 'proposal(x, o, <1>.n)', 'listed(b, n)', 'delegation(b, c, n)', f'{vote}(x, o, c, <1>.n)'],
+          ['counted(x, o, b, n)', 'decided(x, o, <1>.n)'])],
+        comment=f'LDAO:3, Counting: the steward counts b, whose delegate c has a vote {side} counted, as voting {side}; no one wills it.')
 C.append(c)
 
 # ---------------------------------------------------------------- Joint accounts
