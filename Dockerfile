@@ -8,7 +8,7 @@ RUN git init /glp && cd /glp \
  && git remote add origin https://github.com/EShapiro2/GLP.git \
  && git fetch --depth 1 origin $GLP_COMMIT && git checkout FETCH_HEAD
 COPY live/overlay/ /glp/
-COPY index.html data.js /glp/live_server/web/
+COPY index.html how.html data.js /glp/live_server/web/
 COPY stack/ /glp/live_server/web/stack/
 COPY live/web/ /glp/live_server/web/
 WORKDIR /glp/live_server

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works · Grassroots Contracts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f5f7; --card:#fff; --ink:#1d1d1f; --mute:#6e6e73; --faint:#a1a1a6; --line:#e5e5ea;
+  --blue:#0a7aff; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05);
+  --teal:#169482; --indigo:#4a54d6; --amber:#e0911c; --rose:#d6407c;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
+button{font:inherit}
+header{position:sticky;top:0;z-index:10;background:rgba(245,245,247,.82);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(0,0,0,.06)}
+.hin{max-width:1120px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:16px}
+.logo{font-weight:700;font-size:16px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;color:var(--ink)}
+.logo .mark{width:26px;height:26px;border-radius:8px;background:conic-gradient(from 200deg,#4f7bd9,#2bb3a0,#9b7bd4,#f0b54a,#4f7bd9)}
+.hin .back{margin-left:auto;font-size:14px;font-weight:500}
+main{max-width:780px;margin:0 auto;padding:36px 24px 90px}
+h1{font-size:clamp(32px,5vw,46px);letter-spacing:-.025em;line-height:1.08;margin:6px 0 14px;font-weight:800}
+.lead{font-size:19px;color:#3a3a3c;margin:0 0 8px}
+.lead b{color:var(--ink)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;padding:0;list-style:none}
+.toc a{display:inline-block;font-size:13.5px;font-weight:600;color:var(--ink);background:rgba(118,118,128,.12);padding:5px 12px;border-radius:999px}
+.toc a:hover{background:rgba(118,118,128,.2)}
+section{margin-top:56px}
+.kick{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px}
+h2{font-size:clamp(23px,3.2vw,30px);letter-spacing:-.02em;line-height:1.15;margin:0 0 12px;font-weight:800}
+p{margin:0 0 14px}
+.card{background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
+figure{margin:22px 0 22px;padding:18px 18px 14px}
+figure svg{display:block;width:100%;height:auto}
+figcaption{font-size:13.5px;color:var(--mute);margin-top:8px;text-align:center}
+.ctl{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;padding:8px 18px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn.blue{background:var(--blue);color:#fff}.btn.blue:hover{background:#0068e0}
+.btn.grey{background:rgba(118,118,128,.12);color:var(--blue)}.btn.grey:hover{background:rgba(118,118,128,.2)}
+.btn:disabled{opacity:.4;cursor:default}
+/* contrast table */
+table.vs{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 4px}
+table.vs th,table.vs td{padding:11px 14px;text-align:left;border-top:1px solid var(--line)}
+table.vs tr:first-child th{border-top:none;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
+table.vs td.q{font-weight:600}
+table.vs td.them{color:var(--mute)}
+table.vs td.us{color:var(--teal);font-weight:600}
+/* rules */
+.rules{padding:6px 20px}
+.rule{display:grid;grid-template-columns:22px 1fr;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.rule:first-child{border-top:none}
+.rule .m{font-size:15px;line-height:1.6}
+.rule b{display:block;font-size:13px;color:var(--faint);letter-spacing:.04em;text-transform:uppercase}
+/* acts */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
+.act{padding:16px 18px}
+.act .hd{font:600 14px var(--mono);margin-bottom:10px}
+.act .hd .qm{color:var(--rose)}
+.who{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line)}
+.who:first-of-type{border-top:none}
+.av{width:30px;height:30px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.av.a{background:#5b8def}.av.b{background:#34c3ae}
+.who .nm{font-weight:600;flex:1}
+.yes{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--mute)}
+.yes.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.na{font-size:13px;color:var(--faint);font-style:italic}
+.out{margin-top:10px;font-size:14px;padding:8px 12px;border-radius:10px;background:var(--bg);color:var(--mute);min-height:40px}
+.out.ok{background:#e8f8ee;color:#1c7c3f}
+/* kinds */
+.kinds{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.kind{padding:14px 16px}
+.kind .s{font-size:20px;line-height:1}
+.kind h3{margin:6px 0 2px;font-size:16px}
+.kind p{font-size:14px;color:var(--mute);margin:0}
+.kind .eg{font-size:13px;color:var(--ink);margin-top:8px;border-top:1px solid var(--line);padding-top:8px}
+/* ladder */
+.ladder{display:grid;grid-template-columns:262px minmax(0,1fr);gap:0;overflow:hidden;margin:22px 0;padding:0}
+.steps{list-style:none;margin:0;padding:10px 0;border-right:1px solid var(--line);background:#fbfbfd}
+.steps li{display:flex;align-items:center;gap:10px;padding:9px 14px;white-space:nowrap;cursor:pointer;font-size:14px;font-weight:600;color:var(--mute)}
+.steps li .n{width:24px;height:24px;border-radius:50%;background:var(--line);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none;transition:background .2s}
+.steps li .tg{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.tg.people{background:#eef1f8;color:#3a64c4}.tg.ai{background:#fdf0e3;color:#b8650a}.tg.algo{background:#e8f8ee;color:#1c7c3f}.tg.phone{background:#f3eefc;color:#7552c4}
+.steps li.on{color:var(--ink);background:#fff}
+.steps li.on .n,.steps li.done .n{background:var(--ink)}
+.pane{min-width:0;padding:20px 22px;min-height:330px;display:flex;flex-direction:column}
+.pane h3{margin:0 0 4px;font-size:18px}
+.pane .ex{font-size:14.5px;color:#3a3a3c;margin:0 0 12px}
+.pane pre{font:12.5px/1.6 var(--mono);background:#1d1d1f;color:#e5e5ea;border-radius:12px;padding:14px 16px;overflow:auto;margin:0;white-space:pre}
+.pane blockquote{margin:0;padding:12px 16px;border-left:3px solid #3a64c4;background:#f6f8fc;border-radius:0 12px 12px 0;font-size:15.5px}
+.pane .verdict{font:13px var(--mono);background:#e8f8ee;color:#1c7c3f;border-radius:8px;padding:6px 12px;display:inline-block}
+.pane .nav{margin-top:auto;padding-top:14px;display:flex;gap:8px}
+.mock{width:230px;margin:2px auto 0;border:9px solid #1d1d1f;border-radius:30px;padding:30px 14px 22px;background:#f5f5f7}
+.mock .bub{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);font-size:14px}
+.mock .bub b{color:#3a64c4}
+.mock .yn{display:flex;gap:8px;margin-top:10px}
+.mock .yn span{flex:1;text-align:center;border-radius:999px;padding:6px 0;font-weight:700;font-size:13px}
+.mock .yn .y{background:var(--blue);color:#fff}.mock .yn .no{background:rgba(118,118,128,.14);color:var(--mute)}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 10px}
+.small{font-size:13.5px;color:var(--mute)}
+@media (max-width:680px){
+  .acts,.kinds{grid-template-columns:1fr}
+  .ladder{grid-template-columns:1fr}
+  .steps{display:flex;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:6px}
+  .steps li{flex:none;padding:8px 10px}.steps li .tg,.steps li .t{display:none}
+  table.vs{font-size:14px}table.vs th,table.vs td{padding:9px 8px}
+}
+</style>
+</head>
+<body>
+<header><div class="hin">
+  <a class="logo" href="./"><span class="mark"></span>Grassroots Contracts</a>
+  <a class="back" href="./">All contracts</a>
+</div></header>
+<main>
+  <h1>How it works</h1>
+  <p class="lead"><b>Grassroots Contracts are apps that belong to the people who use them.</b> Each starts as a few rules in plain English and is turned, step by step, into an app that runs on people's own phones.</p>
+  <ul class="toc">
+    <li><a href="#own">Your phone, your rules</a></li>
+    <li><a href="#join">Start anywhere</a></li>
+    <li><a href="#contract">Contracts</a></li>
+    <li><a href="#ladder">From words to app</a></li>
+    <li><a href="#try">Try it</a></li>
+  </ul>
+
+  <!-- 1 -->
+  <section id="own">
+    <p class="kick" style="color:#3a64c4">1 · Ownership</p>
+    <h2>Your phone, your rules</h2>
+    <p>Most apps live on a company's servers. The company keeps the data, sets the rules, and can change them or shut the app down. A grassroots app has no such center: each person's phone runs its own copy, keeps its own data, and talks directly to the phones of the people it deals with.</p>
+    <figure class="card">
+      <svg viewBox="0 0 700 250" id="f1" aria-label="A usual app: phones around a company server. A grassroots app: phones connected to each other."></svg>
+    </figure>
+    <div class="card" style="padding:4px 6px">
+      <table class="vs">
+        <tr><th></th><th>A usual app</th><th>A grassroots app</th></tr>
+        <tr><td class="q">Who keeps your data?</td><td class="them">The company</td><td class="us">You, on your phone</td></tr>
+        <tr><td class="q">Who sets the rules?</td><td class="them">The company</td><td class="us">The contract you agreed to</td></tr>
+        <tr><td class="q">Who can shut it down?</td><td class="them">The company</td><td class="us">No single party</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="join">
+    <p class="kick" style="color:var(--teal)">2 · Grassroots</p>
+    <h2>Start anywhere, join up later</h2>
+    <p>A grassroots app needs no headquarters and no permission. A family, a club or a village can start using one on its own. Somewhere else, another group does the same. When people from the two groups meet and agree, the two become one larger group; nothing has to be moved or migrated.</p>
+    <figure class="card">
+      <svg viewBox="0 0 700 260" id="f2" aria-label="Two groups grow separately, then join."></svg>
+      <div class="ctl"><button class="btn blue" id="f2join">Let them meet</button><button class="btn grey" id="f2reset">Start over</button></div>
+      <figcaption>Two groups, started separately. One handshake joins them.</figcaption>
+    </figure>
+    <p>The idea is old. In 1863, Proudhon described federation as a pact between families, towns and groups in which each party keeps more than it gives up. The mathematical definition of a grassroots platform says the same about apps: many copies that start independently of one another, and that join into larger ones once their people connect.</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="contract">
+    <p class="kick" style="color:var(--rose)">3 · Contracts</p>
+    <h2>Who may do what, and whose yes it needs</h2>
+    <p>Every app here starts from a contract: a few rules in plain English. This is the whole contract of the friendship app. (It builds on a smaller one, about having a key and getting to know people.)</p>
+    <div class="card rules">
+      <div class="rule"><span class="m">◆</span><div><b>Friendship</b>Alice and Bob, who know each other personally and are not friends, may jointly decide to become friends.</div></div>
+      <div class="rule"><span class="m">■</span><div><b>Ending a friendship</b>Alice may end their friendship with Bob.</div></div>
+    </div>
+    <p style="margin-top:18px">Each rule becomes a <em>speech act</em>: an action, the people taking part, and whose agreement it needs. A question mark after a name means that person must say yes. Becoming friends needs two yeses. Ending a friendship needs one: Bob is not asked. Try it:</p>
+    <div class="acts">
+      <div class="card act" id="befriend">
+        <div class="hd">befriend(Alice<span class="qm">?</span>, Bob<span class="qm">?</span>)</div>
+        <div class="who"><span class="av a">A</span><span class="nm">Alice</span><button class="yes" data-p="a">wants it</button></div>
+        <div class="who"><span class="av b">B</span><span class="nm">Bob</span><button class="yes" data-p="b">wants it</button></div>
+        <div class="out"></div>
+      </div>
+      <div class="card act" id="unfriend">
+        <div class="hd">unfriend(Alice<span class="qm">?</span>, Bob)</div>
+        <div class="who"><span class="av a">A</span><span class="nm">Alice</span><button class="yes" data-p="a">wants it</button></div>
+        <div class="who"><span class="av b">B</span><span class="nm">Bob</span><span class="na">not asked</span></div>
+        <div class="out"></div>
+      </div>
+    </div>
+    <p>An app can check some rules and not others. It cannot know whether Alice and Bob really met. So each rule is one of three kinds:</p>
+    <div class="kinds">
+      <div class="card kind"><span class="s">■</span><h3>Enforced</h3><p>The app makes it so.</p><div class="eg">Ending a friendship always works.</div></div>
+      <div class="card kind"><span class="s">◆</span><h3>Attested</h3><p>You sign that it is true.</p><div class="eg">"We know each other personally."</div></div>
+      <div class="card kind"><span class="s">○</span><h3>Undertaken</h3><p>A promise the app cannot check.</p><div class="eg">Standing behind everything signed with your key.</div></div>
+    </div>
+    <p>As with any contract, make it with people you trust to keep their word.</p>
+  </section>
+
+  <!-- 4 -->
+  <section id="ladder">
+    <p class="kick" style="color:#1c7c3f">4 · By algorithm</p>
+    <h2>From words to app, step by step</h2>
+    <p>Nobody writes these apps by hand. A chain of programs turns the English contract into the app. AI helps at exactly one step: rewriting the English rules as speech acts, which are short enough for a person to read and check. Every step after that is an ordinary program, which gives the same output for the same input.</p>
+    <p>One of these programs is a checker. It asks three things of the speech acts: that some act can start everything from nothing, that everything a person holds was put there by some act, and that every act is wanted by someone. A theorem says that when all three hold, the app is grassroots. So that property is not hoped for: it is checked by a program and guaranteed by the theorem, by design.</p>
+    <div class="card ladder">
+      <ol class="steps" id="steps"></ol>
+      <div class="pane" id="pane"></div>
+    </div>
+    <p class="small">Every contract on the home page has the same steps, in full, under "Under the hood".</p>
+  </section>
+
+  <!-- 5 -->
+  <section id="try">
+    <p class="kick" style="color:var(--amber)">5 · Try it</p>
+    <h2>Play with a live app</h2>
+    <p>Each contract on the home page has a live demo with four pretend people: Alice, Bob, Carol and Dave. So that you can try it in a browser with nothing to install, their four agents run together on our server. In real use, each agent runs on its owner's phone.</p>
+    <p>This is a research project. The apps are not yet something to install on your phone.</p>
+    <div class="cta">
+      <a class="btn blue" id="demo" href="app.html?c=gsg" target="_blank" rel="noopener">Open the friendship app</a>
+      <a class="btn grey" href="./">Browse all contracts</a>
+    </div>
+    <p class="small">The math: <a href="https://arxiv.org/abs/2502.11299" target="_blank" rel="noopener">Grassroots Platforms with Atomic Transactions</a> (arXiv).</p>
+  </section>
+</main>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+// The demo link: next to this page on a live server, on Render from a static copy.
+if (location.hostname.endsWith('github.io') || location.protocol === 'file:')
+  document.getElementById('demo').href = 'https://grassroots-contracts.onrender.com/app.html?c=gsg';
+
+/* ---------- figure 1: a usual app vs a grassroots app ---------- */
+(function(){
+  const s = document.getElementById('f1');
+  const phone = (x, y, col) => { const g = el('g', {}, s);
+    el('rect', {x: x - 11, y: y - 18, width: 22, height: 36, rx: 5, fill: col}, g);
+    el('rect', {x: x - 7, y: y - 13, width: 14, height: 22, rx: 2, fill: '#fff', opacity: .85}, g); };
+  const label = (x, y, t, w = 700, sz = 15) => { const e = el('text', {x, y, 'text-anchor': 'middle', 'font-size': sz, 'font-weight': w, fill: '#1d1d1f', 'font-family': 'Inter,sans-serif'}, s); e.textContent = t; };
+  // left: hub
+  const cx = 175, cy = 130, R = 82, n = 7, L = [];
+  for (let i = 0; i < n; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / n; L.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+  L.forEach(([x, y]) => el('line', {x1: cx, y1: cy, x2: x, y2: y, stroke: '#c7c7cc', 'stroke-width': 2}, s));
+  el('rect', {x: cx - 24, y: cy - 24, width: 48, height: 48, rx: 10, fill: '#1d1d1f'}, s);
+  [0, 1, 2].forEach(i => el('rect', {x: cx - 15, y: cy - 15 + i * 11, width: 30, height: 7, rx: 2, fill: '#6e6e73'}, s));
+  L.forEach(([x, y]) => phone(x, y, '#a1a1a6'));
+  label(cx, 240, 'A usual app'); label(cx, 30, 'everything goes through the company', 500, 12.5);
+  // right: mesh
+  const mx = 525, R2 = 82, M = [];
+  for (let i = 0; i < n; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / n + .25; M.push([mx + R2 * Math.cos(a) * (i % 2 ? .78 : 1), cy + R2 * Math.sin(a) * (i % 2 ? .78 : 1)]); }
+  [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0],[0,3],[1,5],[2,6],[4,1]].forEach(([i, j]) =>
+    el('line', {x1: M[i][0], y1: M[i][1], x2: M[j][0], y2: M[j][1], stroke: '#34c3ae', 'stroke-width': 2, opacity: .7}, s));
+  M.forEach(([x, y], i) => phone(x, y, ['#5b8def', '#34c3ae', '#a98be3', '#f6c25a', '#f79a78', '#f78fb3', '#7b8cff'][i]));
+  label(mx, 240, 'A grassroots app'); label(mx, 30, 'phones talk to each other directly', 500, 12.5);
+  el('line', {x1: 350, y1: 50, x2: 350, y2: 215, stroke: '#e5e5ea', 'stroke-width': 1.5}, s);
+})();
+
+/* ---------- figure 2: two groups grow, then join ---------- */
+(function(){
+  const s = document.getElementById('f2'), joinB = document.getElementById('f2join'), resetB = document.getElementById('f2reset');
+  // fixed layouts, so every run looks the same
+  const A = [[0,0],[-46,-38],[40,-44],[-58,26],[52,30],[-8,56],[-90,-6],[88,-10]];
+  const EA = [[1,0],[2,0],[3,0],[4,0],[5,3],[6,1],[7,2],[5,4],[3,6]];
+  const B = [[0,0],[44,-40],[-42,-36],[56,28],[-50,32],[6,58],[92,-4],[-88,0]];
+  const EB = [[1,0],[2,0],[3,0],[4,0],[5,3],[6,1],[7,2],[4,5],[6,3]];
+  let timers = [], gA, gB, hull, bridge;
+  function build(){
+    timers.forEach(clearTimeout); timers = []; s.innerHTML = '';
+    hull = el('rect', {x: 90, y: 40, width: 520, height: 180, rx: 90, fill: 'none', stroke: '#7b8cff', 'stroke-width': 2, 'stroke-dasharray': '6 6', opacity: 0}, s);
+    hull.style.transition = 'opacity .6s .5s';
+    bridge = el('line', {stroke: '#1d1d1f', 'stroke-width': 3, opacity: 0}, s);
+    gA = group(A, EA, '#5b8def', 170); gB = group(B, EB, '#34c3ae', 530);
+    joinB.disabled = true;
+    timers.push(setTimeout(() => joinB.disabled = false, 400 * A.length + 200));
+  }
+  function group(P, E, col, cx){
+    const g = el('g', {}, s); g.style.transition = 'transform 1s cubic-bezier(.4,0,.2,1)'; g.dataset.cx = cx;
+    g.style.transform = `translate(${cx}px,130px)`;
+    const lines = el('g', {}, g), dots = el('g', {}, g);
+    P.forEach(([x, y], i) => timers.push(setTimeout(() => {
+      E.filter(([a]) => a === i).forEach(([a, b]) => { const l = el('line', {x1: P[a][0], y1: P[a][1], x2: P[b][0], y2: P[b][1], stroke: col, 'stroke-width': 2, opacity: 0}, lines); l.style.transition = 'opacity .4s'; requestAnimationFrame(() => l.setAttribute('opacity', .6)); });
+      const c = el('circle', {cx: x, cy: y, r: 0, fill: col}, dots); c.style.transition = 'r .35s'; requestAnimationFrame(() => c.setAttribute('r', 11));
+    }, 400 * i)));
+    return g;
+  }
+  joinB.onclick = () => {
+    joinB.disabled = true;
+    gA.style.transform = 'translate(262px,130px)'; gB.style.transform = 'translate(438px,130px)';
+    // the bridge: A's right-most person meets B's left-most person
+    timers.push(setTimeout(() => {
+      bridge.setAttribute('x1', 262 + 88); bridge.setAttribute('y1', 130 - 10);
+      bridge.setAttribute('x2', 438 - 88); bridge.setAttribute('y2', 130);
+      bridge.style.transition = 'opacity .4s'; bridge.setAttribute('opacity', 1);
+      hull.setAttribute('opacity', .9);
+    }, 950));
+  };
+  resetB.onclick = build;
+  // start when the figure scrolls into view
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting){ build(); o.disconnect(); } }, {threshold: .4}).observe(s);
+})();
+
+/* ---------- figure 3: whose yes is needed ---------- */
+(function(){
+  function wire(id, need, done, wait){
+    const box = document.getElementById(id), out = box.querySelector('.out'), st = {a: false, b: false};
+    const show = () => { const ok = need.every(p => st[p]); out.className = 'out' + (ok ? ' ok' : ''); out.textContent = ok ? done : wait(st); };
+    box.querySelectorAll('.yes').forEach(b => b.onclick = () => { st[b.dataset.p] = !st[b.dataset.p]; b.classList.toggle('on', st[b.dataset.p]); show(); });
+    show();
+  }
+  wire('befriend', ['a', 'b'], '✓ Alice and Bob are now friends.',
+    st => st.a ? 'Waiting for Bob.' : st.b ? 'Waiting for Alice.' : 'Nothing happens until both say yes.');
+  wire('unfriend', ['a'], '✓ The friendship is over, on both phones.', () => 'Nothing happens until Alice says yes.');
+})();
+
+/* ---------- figure 4: the ladder, for one rule ---------- */
+(function(){
+  const esc = t => t.replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
+  const S = [
+    {t: 'The rule', tag: ['people', 'people'], h: 'The rule, in English',
+     ex: 'Written by people, as any contract is.',
+     body: '<blockquote>Alice and Bob, who know each other personally and are not friends, may jointly decide to become friends.</blockquote>'},
+    {t: 'Speech act', tag: ['ai', 'AI helps'], h: 'The speech act',
+     ex: 'The rule, made exact: what each of them must have, must not have, and gains. AI helps write it; a person checks it.',
+     code: 'befriend(Alice?, Bob?) :\n  at Alice: identity, knows(Bob),\n            not friend(Bob), +friend(Bob)\n  at Bob:   identity, knows(Alice),\n            not friend(Alice), +friend(Alice)'},
+    {t: 'Grassroots check', tag: ['algo', 'program'], h: 'The grassroots check',
+     ex: 'A program checks the three conditions on all the speech acts of the contract. Its verdict:',
+     body: '<span class="verdict">syntactically_grassroots</span><p class="ex" style="margin-top:12px">By the theorem, the app built from these acts is grassroots.</p>'},
+    {t: 'Transaction', tag: ['algo', 'program'], h: 'The transaction',
+     ex: 'The act becomes a transaction: both phones change together or neither does, and only if both people want it.',
+     code: "Alice gets   friend(Bob)\nBob gets     friend(Alice)\nprovided     Alice has identity, knows(Bob)\n        and  Bob has identity, knows(Alice)\nprovided     Alice has no friend(Bob)\n        and  Bob has no friend(Alice)\nguarded by   Alice and Bob"},
+    {t: 'Platform', tag: ['algo', 'program'], h: 'The platform, in vGLP',
+     ex: "What each person's agent runs. Even the app's buttons come from here: a Befriend button on the Friends tab.",
+     code: 'label(befriend, "Befriend"),\nact(befriend, "Friends", 1, [2], [],\n    [item(2, knows), req(identity, []),\n     req(knows, [at(2)]),\n     forb(friend, [at(2)]), ...])'},
+    {t: 'GLP program', tag: ['algo', 'program'], h: 'The program, in GLP',
+     ex: 'Compiled to GLP, a programming language made for grassroots systems. This line writes the question Bob will see.',
+     code: "sentence_of(befriend(V1, V2), Me, Ws?) :-\n    ground(V2?), ground(V1?), ground(Me?) |\n    ask_of([q(V2?, [person(V1?),\n               text(' asks to be your friend.')])], Me?, Ws)."},
+    {t: 'The app', tag: ['phone', 'phone'], h: 'The app',
+     ex: 'GLP runs on any phone or computer. On Bob\'s phone:',
+     body: '<div class="mock"><div class="bub"><b>Alice</b> asks to be your friend.<div class="yn"><span class="y">Yes</span><span class="no">No</span></div></div></div>'},
+  ];
+  const ol = document.getElementById('steps'), pane = document.getElementById('pane');
+  S.forEach((x, i) => { const li = document.createElement('li');
+    li.innerHTML = `<span class="n">${i + 1}</span><span class="t">${x.t}</span><span class="tg ${x.tag[0]}">${x.tag[1]}</span>`;
+    li.onclick = () => go(i); ol.appendChild(li); });
+  function go(i){
+    [...ol.children].forEach((li, j) => { li.classList.toggle('on', j === i); li.classList.toggle('done', j < i); });
+    const x = S[i];
+    pane.innerHTML = `<h3>${x.h}</h3><p class="ex">${x.ex}</p>${x.code ? `<pre>${esc(x.code)}</pre>` : x.body}
+      <div class="nav">${i ? '<button class="btn grey" id="pv">Back</button>' : ''}${i < S.length - 1 ? '<button class="btn blue" id="nx">Next step</button>' : '<button class="btn grey" id="rs">From the top</button>'}</div>`;
+    const b = id => pane.querySelector('#' + id);
+    if (b('pv')) b('pv').onclick = () => go(i - 1);
+    if (b('nx')) b('nx').onclick = () => go(i + 1);
+    if (b('rs')) b('rs').onclick = () => go(0);
+  }
+  go(0);
+})();
+</script>
+</body>
+</html>
