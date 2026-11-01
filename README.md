@@ -4,7 +4,7 @@ The grassroots social contracts of Ehud Shapiro's GLP project, as a browsable si
 contracts that have a live app (GnW and LBM, which have none, are left out), each contract's text, the cascade from English to running code ("under the hood"), and a
 live app for every compiled contract: four people, each with an agent running the compiled platform.
 
-- **Site** (static): `index.html`, `data.js`, `stack/` (the cascade's layers, loaded on demand).
+- **Site** (static): `index.html`, `how.html` ("How it works", for general readers), `data.js`, `stack/` (the cascade's layers, loaded on demand).
   Served by GitHub Pages and by the live server.
 - **Live server**: `Dockerfile`, `render.yaml`. GLP at a pinned commit, with `live/overlay` on top:
   a generated live harness per contract (`programs/vglp/cva/live_<c>`), the server (`live_server`),
