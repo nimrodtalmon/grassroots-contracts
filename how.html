@@ -25,7 +25,7 @@ main{max-width:780px;margin:0 auto;padding:36px 24px 90px}
 h1{font-size:clamp(32px,5vw,44px);letter-spacing:-.025em;line-height:1.08;margin:6px 0 14px;font-weight:800}
 .lead{font-size:18px;color:var(--ink2);margin:0 0 8px}
 section{margin-top:54px}
-.num{font-size:13px;font-weight:700;color:var(--faint);margin:0 0 2px}
+.sn{display:inline-flex;align-items:center;justify-content:center;width:1.25em;height:1.25em;border-radius:50%;background:var(--ink);color:#fff;font-size:.62em;font-weight:700;margin-right:.45em;vertical-align:.22em}
 h2{font-size:clamp(23px,3.2vw,29px);letter-spacing:-.02em;line-height:1.15;margin:0 0 12px;font-weight:800}
 p{margin:0 0 14px}
 .card{background:var(--card);border-radius:20px;box-shadow:var(--shadow)}
@@ -109,6 +109,9 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 .mock .yn{display:flex;gap:6px;margin-top:9px}
 .mock .yn span{flex:1;text-align:center;border-radius:999px;padding:5px 0;font-weight:600;font-size:12.5px}
 .mock .yn .y{background:var(--blue);color:#fff}.mock .yn .no{background:rgba(118,118,128,.14);color:var(--mute)}
+.gbadge{display:block;margin:14px auto 0;max-width:330px;text-align:center;background:#e8f8ee;color:#1c7c3f;border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px}
+.gbadge span{display:block;font-weight:500;font-size:12.5px;color:#2e7d4f}
+.gbadge:hover{background:#dcf3e5}
 .cta{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 10px}
 @media (max-width:680px){
   .kinds{grid-template-columns:1fr}
@@ -137,8 +140,7 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 
   <!-- 1 -->
   <section id="who">
-    <p class="num">1</p>
-    <h2>Who runs an app?</h2>
+    <h2><span class="sn">1</span>Who runs an app?</h2>
     <p>Most apps run on a company's servers: the company keeps the data and sets the rules. Blockchains such as Ethereum replace the company with a global network of computers, the <span class="tip" tabindex="0">validators<template>The computers that check and record every act on a blockchain. On Ethereum they lock up coins as a deposit and earn fees.</template></span>, which must all agree on one shared ledger and are paid a fee for every act. A grassroots app has neither. Each person's phone runs its own copy and keeps its own data, and an act involves only the phones of the people taking part in it.</p>
     <figure class="card">
       <div class="seg" id="f1seg"><button data-k="co" class="on">Company app</button><button data-k="bc">Blockchain app</button><button data-k="gr">Grassroots app</button></div>
@@ -159,8 +161,7 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 
   <!-- 2 -->
   <section id="join">
-    <p class="num">2</p>
-    <h2>Start small, join later</h2>
+    <h2><span class="sn">2</span>Start small, join later</h2>
     <p>A grassroots app needs no headquarters and no permission to start. A family, a club or a village can start using one on its own; elsewhere, another group does the same. When people from the two groups meet and agree, the two groups become one, with nothing to move or migrate. Repeated, this is how a grassroots app spreads: group by group, from the bottom up.</p>
     <figure class="card">
       <svg viewBox="0 0 700 270" id="f2" aria-label="Two groups grow separately, then join."></svg>
@@ -172,14 +173,13 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 
   <!-- 3 -->
   <section id="contract">
-    <p class="num">3</p>
-    <h2>What a contract is</h2>
-    <p>Contracts are written in a small, precise kind of English. Each rule says who may do what, and whose agreement it needs; there is nothing else in a contract. Here is a complete one, for a friendship app. It has two rules, on top of a basic contract about having a key and getting to know people.</p>
+    <h2><span class="sn">3</span>What a contract is</h2>
+    <p>Contracts are written in a small, precise kind of English. Each rule says who may do what, and whose agreement it needs; there is nothing else in a contract. Yet these few kinds of rules are enough for every contract on this site: social networks and group chats, personal coins and bonds, barter, short-stay rentals, a lending library, joint accounts, and DAOs with voting and liquid democracy. Here is a complete one, for a friendship app. It has two rules, on top of a basic contract about having a key and getting to know people.</p>
     <div class="card rules">
       <div class="rule"><span>◆</span><div><b>Friendship</b>Alice and Bob, who know each other personally and are not friends, may jointly decide to become friends.</div></div>
       <div class="rule"><span>■</span><div><b>Ending a friendship</b>Alice may end their friendship with Bob.</div></div>
     </div>
-    <p style="margin-top:18px">The two rules differ in whose agreement they need. Becoming friends needs both Alice and Bob. Ending a friendship is Alice's act alone: Bob is not asked. Try it:</p>
+    <p style="margin-top:18px">The two rules differ in whose agreement they need. Becoming friends needs both Alice and Bob. Ending a friendship takes only one of them: whoever ends it, the other is not asked. Try it:</p>
     <figure class="card">
       <div class="duo">
         <div class="ph" id="phA"></div>
@@ -200,8 +200,7 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 
   <!-- 4 -->
   <section id="ladder">
-    <p class="num">4</p>
-    <h2>How a contract becomes an app</h2>
+    <h2><span class="sn">4</span>How a contract becomes an app</h2>
     <p>This is not vibe coding. AI helps at exactly one step: translating the English rules into <span class="tip" tabindex="0">speech acts<template>A rule in exact form: the act, the people taking part, what each must have beforehand, and what changes for each. A question mark marks whose agreement is needed.</template></span>, a precise form that a person can read and check. Every step after that is a fixed program: the same input always gives the same output, with no guessing.</p>
     <p>Speech acts are simple enough that a program can check, from their form alone, that the app will be grassroots, and a theorem proves that this check is enough. So every app here is grassroots by construction.</p>
     <div class="card ladder">
@@ -213,8 +212,7 @@ figcaption{font-size:14px;color:var(--mute);margin-top:6px;text-align:center;min
 
   <!-- 5 -->
   <section id="try">
-    <p class="num">5</p>
-    <h2>Try it</h2>
+    <h2><span class="sn">5</span>Try it</h2>
     <p>Each contract on the home page has a live demo with four pretend people: Alice, Bob, Carol and Dave. So that you can try it in a browser with nothing to install, their four agents run together on our server. In real use, each runs on its owner's phone.</p>
     <p>This is a research project. The apps are not yet something to install on your phone.</p>
     <div class="cta">
@@ -355,13 +353,15 @@ function phone(parent, x, y, col, letter){
         : asked ? '<div class="wait">Waiting for Bob…</div>'
         : '<button class="pb y" id="ask">Ask Bob to be friends</button>') + '</div>';
     B.innerHTML = bar('Bob', '#34c3ae') + st('Alice') + '<div class="body">' +
-      (asked ? '<div class="msg"><b>Alice</b> asks to be your friend.<div class="row" style="margin-top:8px"><button class="pb y" id="yes">Yes</button><button class="pb n" id="no">No</button></div></div>' : '') + '</div>';
+      (asked ? '<div class="msg"><b>Alice</b> asks to be your friend.<div class="row" style="margin-top:8px"><button class="pb y" id="yes">Yes</button><button class="pb n" id="no">No</button></div></div>'
+        : friends ? '<button class="pb end" id="endB">End friendship</button>' : '') + '</div>';
     note.textContent = msg;
     const on = (id, f) => { const b = document.getElementById(id); if (b) b.onclick = f; };
     on('ask', () => { asked = true; draw('Alice said yes. Bob has not answered yet.'); });
     on('yes', () => { asked = false; friends = true; draw('Both said yes: Alice and Bob are friends.'); });
     on('no', () => { asked = false; draw('Bob said no, so nothing changed.'); });
     on('end', () => { friends = false; draw('Alice ended the friendship. Bob was not asked.'); });
+    on('endB', () => { friends = false; draw('Bob ended the friendship. Alice was not asked.'); });
   }
   draw('Alice and Bob know each other, but are not friends.');
 })();
@@ -378,7 +378,7 @@ function phone(parent, x, y, col, letter){
      code: 'befriend(Alice?, Bob?) :\n  at Alice: identity, knows(Bob),\n            not friend(Bob), +friend(Bob)\n  at Bob:   identity, knows(Alice),\n            not friend(Alice), +friend(Alice)'},
     {t: 'Grassroots check', tag: ['algo', 'program'], h: 'The grassroots check',
      ex: 'A program checks the form of all the speech acts of the contract. Its verdict:',
-     body: '<span class="verdict">syntactically_grassroots</span><p class="ex" style="margin-top:12px">By the theorem, the app built from these acts is grassroots.</p>'},
+     body: '<span class="verdict">✓&nbsp; syntactically_grassroots</span><p class="ex" style="margin-top:12px">By the theorem, the app built from these acts is grassroots.</p>'},
     {t: 'Transaction', tag: ['algo', 'program'], h: 'The transaction',
      ex: 'Both sides change together or not at all, and only if both people want it.',
      code: "Alice gets   friend(Bob)\nBob gets     friend(Alice)\nprovided     Alice has identity, knows(Bob)\n        and  Bob has identity, knows(Alice)\nprovided     Alice has no friend(Bob)\n        and  Bob has no friend(Alice)\nguarded by   Alice and Bob"},
@@ -390,7 +390,7 @@ function phone(parent, x, y, col, letter){
      code: "sentence_of(befriend(V1, V2), Me, Ws?) :-\n    ground(V2?), ground(V1?), ground(Me?) |\n    ask_of([q(V2?, [person(V1?),\n               text(' asks to be your friend.')])], Me?, Ws)."},
     {t: 'The app', tag: ['dev', 'phone'], h: 'The app',
      ex: 'GLP runs on any phone or computer. On Bob\'s phone:',
-     body: '<div class="mock"><div class="bub"><b>Alice</b> asks to be your friend.<div class="yn"><span class="y">Yes</span><span class="no">No</span></div></div></div>'},
+     body: '<div class="mock"><div class="bub"><b>Alice</b> asks to be your friend.<div class="yn"><span class="y">Yes</span><span class="no">No</span></div></div></div><a class="gbadge" href="#who">✓&nbsp; A grassroots app<span>run by its users, nothing in the middle, grows bottom-up</span></a>'},
   ];
   const ol = $('#steps'), pane = $('#pane');
   S.forEach((x, i) => { const li = document.createElement('li');
